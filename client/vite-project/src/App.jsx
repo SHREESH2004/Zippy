@@ -20,7 +20,7 @@ import Checks from "../components/common/checkaith";
 import { checkAuth } from './store/auth-slice';
 import ProductPage from './pages/admin/Productpage';
 function App() {
-  const { isAuthenticated, user,isLoading } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const dispatch=useDispatch();
   useEffect(()=>{
 
