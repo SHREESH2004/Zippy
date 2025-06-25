@@ -79,6 +79,7 @@ const Products = () => {
         });
         setErrors({});
         toggleModal();
+        console.log(formData)
 
         // Set notification message
         setNotification('Product successfully added!');

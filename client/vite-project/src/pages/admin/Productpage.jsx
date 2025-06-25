@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { editProduct, deleteProduct } from '../../store/admin';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 
 const ProductPage = () => {
   const [editProductData, setEditProductData] = useState(null);
   const [notification, setNotification] = useState('');
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const { productList, isLoading, error } = useSelector((state) => state.adminProducts);
 
@@ -99,27 +99,63 @@ const ProductPage = () => {
               onChange={(e) => setEditProductData({ ...editProductData, title: e.target.value })}
               placeholder="Title"
               style={inputStyles}
+              required
             />
             <textarea
               value={editProductData.description}
               onChange={(e) => setEditProductData({ ...editProductData, description: e.target.value })}
               placeholder="Description"
               style={textareaStyles}
+              required
+            />
+            <input
+              type="text"
+              value={editProductData.category}
+              onChange={(e) => setEditProductData({ ...editProductData, category: e.target.value })}
+              placeholder="Category"
+              style={inputStyles}
+              required
+            />
+            <input
+              type="text"
+              value={editProductData.brand}
+              onChange={(e) => setEditProductData({ ...editProductData, brand: e.target.value })}
+              placeholder="Brand"
+              style={inputStyles}
+              required
             />
             <input
               type="number"
               value={editProductData.price}
-              onChange={(e) => setEditProductData({ ...editProductData, price: e.target.value })}
+              onChange={(e) => setEditProductData({ ...editProductData, price: Number(e.target.value) })}
               placeholder="Price"
+              style={inputStyles}
+              required
+            />
+            <input
+              type="number"
+              value={editProductData.salePrice}
+              onChange={(e) => setEditProductData({ ...editProductData, salePrice: Number(e.target.value) })}
+              placeholder="Sale Price"
               style={inputStyles}
             />
             <input
               type="number"
               value={editProductData.totalStock}
-              onChange={(e) => setEditProductData({ ...editProductData, totalStock: e.target.value })}
-              placeholder="Stock"
+              onChange={(e) => setEditProductData({ ...editProductData, totalStock: Number(e.target.value) })}
+              placeholder="Total Stock"
               style={inputStyles}
+              required
             />
+            <input
+              type="text"
+              value={editProductData.image}
+              onChange={(e) => setEditProductData({ ...editProductData, image: e.target.value })}
+              placeholder="Image URL"
+              style={inputStyles}
+              required
+            />
+
             <div style={formButtonGroupStyles}>
               <button type="submit" style={saveButtonStyles}>Save Changes</button>
               <button type="button" onClick={() => setEditProductData(null)} style={cancelButtonStyles}>Cancel</button>
@@ -127,6 +163,7 @@ const ProductPage = () => {
           </form>
         </div>
       )}
+
     </div>
   );
 };

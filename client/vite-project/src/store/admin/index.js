@@ -54,13 +54,17 @@ export const editProduct = createAsyncThunk(
 );
 
 // Thunk: Add Product (with FormData)
+// Thunk: Add Product (with JSON payload, since you're using an image URL)
 export const addProduct = createAsyncThunk(
   'adminProducts/addProduct',
-  async (formData, thunkAPI) => {
+  async (productData, thunkAPI) => {
     try {
       const response = await fetch('http://localhost:3000/admin/products/products', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productData), // image is a URL in this case
       });
 
       if (!response.ok) {
@@ -70,13 +74,13 @@ export const addProduct = createAsyncThunk(
       const data = await response.json();
       return data;
     } catch (error) {
-      if (error.name === 'TypeError') {
-        return thunkAPI.rejectWithValue('Network error. Please try again later.');
-      }
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(
+        error.message || 'Something went wrong while adding the product.'
+      );
     }
   }
 );
+
 
 // Slice
 const adminProductSlice = createSlice({

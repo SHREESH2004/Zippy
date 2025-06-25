@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 const ImageUpload = () => {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
