@@ -52,9 +52,6 @@ export const editProduct = createAsyncThunk(
     }
   }
 );
-
-// Thunk: Add Product (with FormData)
-// Thunk: Add Product (with JSON payload, since you're using an image URL)
 export const addProduct = createAsyncThunk(
   'adminProducts/addProduct',
   async (productData, thunkAPI) => {
@@ -64,7 +61,7 @@ export const addProduct = createAsyncThunk(
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(productData), // image is a URL in this case
+        body: JSON.stringify(productData), 
       });
 
       if (!response.ok) {
