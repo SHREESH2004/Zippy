@@ -81,8 +81,6 @@ export const addProduct = createAsyncThunk(
   }
 );
 
-
-// Slice
 const adminProductSlice = createSlice({
   name: 'adminProducts',
   initialState,
