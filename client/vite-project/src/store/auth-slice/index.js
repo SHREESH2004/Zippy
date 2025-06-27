@@ -43,6 +43,30 @@ export const login = createAsyncThunk(
   }
 );
 
+
+export const logoutUser = createAsyncThunk(
+  'user/logout',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('/user/logout', null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      dispatch(logout());
+      return true;
+    } catch (error) {
+      const errorMsg = error?.response?.data?.message || 'Logout failed';
+      toast.error(errorMsg);
+      return rejectWithValue({ message: errorMsg });
+    }
+  }
+);
+
+
+
 // ✅ Async thunk to check authentication
 export const checkAuth = createAsyncThunk(
   'user/checkAuth',
@@ -134,6 +158,16 @@ const authSlice = createSlice({
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         toast.error(action.payload?.message || "Authentication check failed");
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
   },
 });
