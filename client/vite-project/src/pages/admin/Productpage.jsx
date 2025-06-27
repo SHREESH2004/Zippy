@@ -36,7 +36,7 @@ const ProductPage = () => {
   const handleDeleteClick = async (productId) => {
     const action = await dispatch(deleteProduct(productId));
     if (deleteProduct.fulfilled.match(action)) {
-      setNotification(`✅ Product deleted successfully! Response: ${action.payload}`);
+      setNotification(`✅ Product deleted successfully!`);
       setTimeout(() => setNotification(''), 3000);
     } else {
       setNotification(`❌ Delete failed: ${action.payload}`);
@@ -47,7 +47,7 @@ const ProductPage = () => {
   const handleEditSubmit = async () => {
     const action = await dispatch(editProduct(editProductData));
     if (editProduct.fulfilled.match(action)) {
-      setNotification(`✅ Product updated successfully! Response: ${action.payload}`);
+      setNotification(`✅ Product updated successfully!`);
       setEditProductData(null);
       setTimeout(() => setNotification(''), 3000);
     } else {

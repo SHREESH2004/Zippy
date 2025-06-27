@@ -10,7 +10,7 @@ const PageNotFound = () => {
         <p style={text}>
           The page you’re looking for doesn’t exist or has been moved.
         </p>
-        <Link to="/" style={homeBtn}>
+        <Link to="/login" style={homeBtn}>
           Go back home
         </Link>
       </div>

@@ -4,22 +4,25 @@ import { configDotenv } from 'dotenv';
 configDotenv();
 
 export const authMiddleware = (req, res, next) => {
-  // Retrieve the token from cookies
-  const token = req.cookies.token || req.header('Authorization')?.replace('Bearer ', '');
+  const token = req.cookies?.token || req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
-    return res.status(401).json({ message: 'Authentication required' });
+    return res.status(401).json({ message: 'Authentication token not provided' });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    req.user = decoded; 
-
-    next(); 
+    req.user = decoded;
+    next();
   } catch (err) {
-    console.error(err);
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    console.error('Token verification error:', err);
+
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token has expired. Please log in again.' });
+    } else if (err.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token. Authentication failed.' });
+    } else {
+      return res.status(500).json({ message: 'Internal server error during authentication.' });
+    }
   }
 };
-

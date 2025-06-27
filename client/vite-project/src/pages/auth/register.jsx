@@ -23,7 +23,7 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await dispatch(register(formData)).unwrap(); 
+      const response = await dispatch(register(formData)).unwrap();
       if (response.success) {
         navigate('/login');
       } else {
@@ -32,9 +32,10 @@ const Register = () => {
       }
     } catch (error) {
       console.error('Registration error:', error);
+      navigate('/login');
     }
   };
-  
+
 
   return (
     <div style={pageStyles}>
