@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { ShoppingBasket } from 'lucide-react';
 const Homepage = () => {
   const navigate = useNavigate();
 
@@ -50,6 +50,12 @@ const Homepage = () => {
       backgroundColor: '#009f42', // darker green on hover
       boxShadow: '0 12px 36px rgba(0, 200, 81, 0.5)',
     },
+    icon: {
+      verticalAlign: 'middle',
+      marginLeft: '10px',
+      color: '#00c851',
+    }
+
   };
 
   const [hover, setHover] = React.useState(false);
@@ -61,7 +67,10 @@ const Homepage = () => {
           Welcome to <span style={styles.highlight}>Zippy</span>
         </h1>
         <p style={styles.subText}>
-          Your sleek, high-performance full-stack eCommerce platform.
+          Your sleek, high-performance eCommerce platform
+          <span style={styles.icon}>
+            <ShoppingBasket size={20} />
+          </span>
         </p>
         <button
           style={hover ? { ...styles.button, ...styles.buttonHover } : styles.button}
@@ -69,7 +78,7 @@ const Homepage = () => {
           onMouseLeave={() => setHover(false)}
           onClick={() => navigate('/login')}
         >
-          Login
+          Shop Now
         </button>
       </div>
     </div>

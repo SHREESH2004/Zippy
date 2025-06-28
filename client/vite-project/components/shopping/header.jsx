@@ -1,15 +1,32 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import { HousePlus ,ShoppingBasket,BaggageClaim,LogOut,Store,ShoppingCart} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const ShoppingHeader = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    // Clear local storage
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+
+    // Show success toast
+    toast.success('Logout successful!');
+
+    // Redirect to login
+    navigate('/login');
+  };
   return (
     <header style={headerStyles}>
       <div style={logoStyles}>Zippy</div>
       <nav style={navStyles}>
-        <Link to="/home" style={linkStyles}>Home</Link>
-        <Link to="/products" style={linkStyles}>Shop</Link>
-        <Link to="/cart" style={linkStyles}>Cart</Link>
-        <Link to="/login" style={linkStyles}>Login</Link>
+        <Link to="/home" style={linkStyles}><HousePlus /></Link>
+        <Link to="/products" style={linkStyles}><Store /></Link>
+        <Link to="/cart" style={linkStyles}><ShoppingCart /></Link>
+        <span onClick={handleLogout} style={{ ...linkStyles, cursor: 'pointer' }}>
+          <LogOut />
+        </span>
       </nav>
     </header>
   );
