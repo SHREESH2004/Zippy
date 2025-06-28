@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { editProduct, deleteProduct } from '../../store/admin';
-//import { useNavigate } from 'react-router-dom';
 
 const ProductPage = () => {
   const [editProductData, setEditProductData] = useState(null);
   const [notification, setNotification] = useState('');
   const dispatch = useDispatch();
-  //const navigate = useNavigate();
 
   const { productList, isLoading, error } = useSelector((state) => state.adminProducts);
 

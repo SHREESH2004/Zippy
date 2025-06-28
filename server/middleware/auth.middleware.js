@@ -4,10 +4,12 @@ import { configDotenv } from 'dotenv';
 configDotenv();
 
 export const authMiddleware = (req, res, next) => {
-  const token = req.cookies?.token || req.header('Authorization')?.replace('Bearer ', '');
+  const bearerToken = req.header('Authorization');
+  const cookieToken = req.cookies?.token;
+  const token = cookieToken || (bearerToken?.startsWith('Bearer ') ? bearerToken.split(' ')[1] : null);
 
   if (!token) {
-    return res.status(401).json({ message: 'Authentication token not provided' });
+    return res.status(401).json({ success: false, message: 'Authentication token not provided' });
   }
 
   try {
@@ -15,14 +17,16 @@ export const authMiddleware = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    console.error('Token verification error:', err);
+    console.error('Token verification error');
 
     if (err.name === 'TokenExpiredError') {
-      return res.status(401).json({ message: 'Token has expired. Please log in again.' });
-    } else if (err.name === 'JsonWebTokenError') {
-      return res.status(401).json({ message: 'Invalid token. Authentication failed.' });
-    } else {
-      return res.status(500).json({ message: 'Internal server error during authentication.' });
+      return res.status(401).json({ success: false, message: 'Token has expired. Please log in again.' });
     }
+
+    if (err.name === 'JsonWebTokenError') {
+      return res.status(401).json({ success: false, message: 'Login to Authenticate' });
+    }
+
+    return res.status(500).json({ success: false, message: 'Internal server error during authentication.' });
   }
 };

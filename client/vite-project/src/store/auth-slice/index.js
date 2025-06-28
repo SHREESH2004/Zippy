@@ -3,11 +3,9 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// ✅ Load user and token from localStorage
 const userFromStorage = localStorage.getItem('user');
 const tokenFromStorage = localStorage.getItem('token');
 
-// ✅ Initial state
 const initialState = {
   isAuthenticated: !!tokenFromStorage,
   isLoading: false,
@@ -15,7 +13,6 @@ const initialState = {
   error: null,
 };
 
-// ✅ Async thunk for register
 export const register = createAsyncThunk(
   '/register',
   async (formData, { rejectWithValue }) => {
@@ -23,13 +20,20 @@ export const register = createAsyncThunk(
       const response = await axios.post('http://localhost:3000/user/register', formData);
       return response.data;
     } catch (error) {
-      const errorMsg = error?.response?.data?.message || 'Registration failed';
+      let errorMsg = error?.response?.data?.message || 'Registration failed';
+
+      if (error.message === 'Network Error' || error.code === 'ERR_CONNECTION_REFUSED') {
+        errorMsg = 'Server down. Work In Progress';
+      } else {
+        errorMsg = error?.response?.data?.message || errorMsg;
+      }
+
       return rejectWithValue({ message: errorMsg });
     }
   }
 );
 
-// ✅ Async thunk for login
+
 export const login = createAsyncThunk(
   '/login',
   async (formData, { rejectWithValue }) => {
@@ -37,11 +41,19 @@ export const login = createAsyncThunk(
       const response = await axios.post('http://localhost:3000/user/login', formData);
       return response.data;
     } catch (error) {
-      const errorMsg = error?.response?.data?.message || 'Login failed';
+      let errorMsg = 'Login failed';
+
+      if (error.message === 'Network Error' || error.code === 'ERR_CONNECTION_REFUSED') {
+        errorMsg = 'Server down. Work In Progress';
+      } else {
+        errorMsg = error?.response?.data?.message || errorMsg;
+      }
+
       return rejectWithValue({ message: errorMsg });
     }
   }
 );
+
 
 
 export const logoutUser = createAsyncThunk(

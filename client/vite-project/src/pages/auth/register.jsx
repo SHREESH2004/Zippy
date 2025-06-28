@@ -32,7 +32,6 @@ const Register = () => {
       }
     } catch (error) {
       console.error('Registration error:', error);
-      navigate('/login');
     }
   };
 

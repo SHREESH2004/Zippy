@@ -23,14 +23,12 @@ const Login = () => {
     e.preventDefault();
     try {
       const result = await dispatch(login(formData)).unwrap();
-      // You could check role here for custom redirection:
       if (result?.user?.role === 'admin') {
         navigate('/admin/dashboard');
       } else {
         navigate('/shopping/home');
       }
     } catch (error) {
-      // Errors are handled via toast inside the slice
       console.error('Login failed:', error);
     }
   };

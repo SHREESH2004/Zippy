@@ -2,16 +2,15 @@ import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom'; 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import Home from './pages/shopping/home';
 import Login from './pages/auth/login';
 import Register from './pages/auth/register';
 import AdminLayout from '../components/admin/layout';
 import AdminDashboard from './pages/admin/dashboard';
 import AdminOrders from './pages/admin/orders';
-
 import ShoppingLayout from '../components/shopping/layout';
 import PageNotFound from './pages/notfound/no';
-import Home from './pages/shopping/home';
+import Homepage from './pages/auth/Home';
 import List from './pages/shopping/list';
 import Checkout from './pages/shopping/checkout';
 import Account from './pages/shopping/account';
@@ -35,6 +34,8 @@ function App() {
 
       <Routes>
         {/* Public Routes */}
+
+        <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 

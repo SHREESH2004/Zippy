@@ -6,7 +6,7 @@ const ShoppingHeader = () => {
     <header style={headerStyles}>
       <div style={logoStyles}>Zippy</div>
       <nav style={navStyles}>
-        <Link to="/" style={linkStyles}>Home</Link>
+        <Link to="/home" style={linkStyles}>Home</Link>
         <Link to="/products" style={linkStyles}>Shop</Link>
         <Link to="/cart" style={linkStyles}>Cart</Link>
         <Link to="/login" style={linkStyles}>Login</Link>
