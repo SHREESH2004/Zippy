@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  HousePlus,
   LogOut,
   ShoppingCart,
-  AlignJustify
+  AlignJustify,
+  CircleUserRound,
+  User
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
 import { shoppingviewMenuItems } from '../../src/config';
-import { CircleUserRound } from 'lucide-react';
 const ShoppingHeader = () => {
   const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
   const username = auth?.user?.username;
-
+  const [showDropdown, setShowDropdown] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
-  const [showLogout, setShowLogout] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -26,8 +25,8 @@ const ShoppingHeader = () => {
     navigate('/login');
   };
 
-  const toggleLogout = () => {
-    setShowLogout((prev) => !prev);
+  const toggleDropdown = () => {
+    setShowDropdown(prev => !prev);
   };
 
   const getInitials = (name) => {
@@ -37,20 +36,19 @@ const ShoppingHeader = () => {
   };
 
   return (
-    <header style={headerStyles}>
-      {/* Left: Logo + Hi Username */}
-      <div style={leftSection}>
-        <div style={logoStyles}>Zippy</div>
-        {username && (
-          <div
-            style={hiUsernameStyles}
-            className="hi-username"
-            title={`Hello, ${username}!`}
-          >
-            Hi, <span style={{ fontWeight: '700' }}>{username}</span>
-          </div>
-        )}
-      </div>
+<header style={headerStyles}>
+  <div style={leftSection}>
+    <div style={logoStyles}>Zippy</div>
+    {username && (
+      <button
+        className="hi-user-btn"
+        onClick={() => navigate('/shopping/profile')}
+      >
+        <strong>{username}</strong>
+      </button>
+    )}
+  </div>
+
 
       {/* Center: Shopping Menu Items */}
       <nav style={centerSection}>
@@ -70,113 +68,150 @@ const ShoppingHeader = () => {
         ))}
       </nav>
 
-      {/* Right: Icons + User Circle */}
+
       <div style={rightSection}>
-        <Link to="/shopping/profile" style={iconLinkStyles} title="Home"><CircleUserRound /></Link>
-        <Link to="/shopping/cart" style={iconLinkStyles} title="Cart"><ShoppingCart /></Link>
-        <Link to="/shopping/checkout" style={iconLinkStyles} title="Menu"><AlignJustify /></Link>
+        <Link to="/shopping/profile" style={iconLinkStyles} title="Profile">
+          <CircleUserRound />
+        </Link>
+        <Link to="/shopping/cart" style={iconLinkStyles} title="Cart">
+          <ShoppingCart />
+        </Link>
 
         {username && (
           <div style={{ position: 'relative' }}>
-            <div
-              onClick={toggleLogout}
-              title={username}
-              className="user-circle"
-            >
+            <div className="user-circle" onClick={toggleDropdown}>
               {getInitials(username)}
             </div>
 
-            {showLogout && (
-              <button
-                onClick={handleLogout}
-                style={logoutButtonStyles}
-              >
-                <LogOut style={{ marginRight: 6 }} /> Logout
-              </button>
+            {showDropdown && (
+              <div className="dropdown">
+                <button onClick={() => navigate('/shopping/profile')}>
+                  <User size={16} style={{ marginRight: 6 }} /> Account
+                </button>
+                <button onClick={handleLogout}>
+                  <LogOut size={16} style={{ marginRight: 6 }} /> Logout
+                </button>
+              </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Inline CSS for hover effects */}
       <style>{`
-        /* User Circle */
-        .user-circle {
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          background-color: #fff;
+        .hi-user-btn {
+          margin-left: 12px;
+          background: transparent;
+          color:rgb(247, 246, 246);
+          border: 2px rgb(15, 15, 15);
+          padding: 6px 12px;
+          font-size: 1rem;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .hi-user-btn:hover {
+          background-color:rgb(247, 252, 252);
           color: #000;
+        }
+
+        .user-circle {
+          width: 42px;
+          height: 42px;
+          background: #fff;
+          color: #000;
+          border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: 700;
-          font-size: 1.2rem;
-          user-select: none;
+          font-weight: bold;
+          font-size: 1.1rem;
           cursor: pointer;
-          box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-          transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
-          border: 2px solid transparent;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+          transition: all 0.3s ease;
         }
+
         .user-circle:hover {
-          background-color: #00dfc4;
+          background: #00dfc4;
           color: #fff;
-          box-shadow: 0 6px 22px rgba(0, 223, 196, 0.75);
-          border-color: #00b8a9;
           transform: scale(1.1);
         }
 
-        /* Hi Username Text */
-        .hi-username {
-          transition: color 0.3s ease, text-decoration 0.3s ease;
-          cursor: pointer;
-          padding: 4px 8px;
+        .dropdown {
+          position: absolute;
+          top: 50px;
+          right: 0;
+          background: #fff;
+          border: 1px solid #ccc;
           border-radius: 6px;
-          user-select: none;
-          color: #00dfc4;
-        }
-        .hi-username:hover {
-          color: #fff;
-          text-decoration: underline;
-          background-color: rgba(0, 223, 196, 0.15);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+          z-index: 1000;
+          display: flex;
+          flex-direction: column;
+          min-width: 140px;
         }
 
-        /* Menu Links */
-        nav a:hover {
-          text-decoration: none;
+        .dropdown button {
+          background: transparent;
+          border: none;
+          padding: 10px 16px;
+          text-align: left;
+          font-size: 0.95rem;
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+
+        .dropdown button:hover {
+          background-color: #f3f3f3;
         }
       `}</style>
     </header>
   );
 };
 
+// Styles
 const headerStyles = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '16px 36px',
+  padding: '16px 32px',
   backgroundColor: '#000',
   color: '#fff',
   position: 'sticky',
   top: 0,
   zIndex: 1000,
-  fontFamily: `'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif`,
-  boxShadow: '0 2px 16px rgba(0, 0, 0, 0.7)',
 };
 
 const leftSection = {
   display: 'flex',
   alignItems: 'center',
-  gap: '20px',
-  flex: '0 0 auto',
+  gap: '16px',
 };
 
-const hiUsernameStyles = {
-  fontSize: '1.1rem',
-  fontWeight: '500',
+const rightSection = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '24px',
+};
+
+const logoStyles = {
+  fontSize: '2.2rem',
+  fontWeight: '700',
+  color:  '#00dfc4',
+  cursor: 'default',
   userSelect: 'none',
 };
 
+const iconLinkStyles = {
+  color: '#fff',
+  fontSize: '1.3rem',
+  textDecoration: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  transition: 'color 0.3s ease',
+};
 const centerSection = {
   display: 'flex',
   alignItems: 'center',
@@ -185,68 +220,23 @@ const centerSection = {
   flex: '1 1 auto',
 };
 
-const rightSection = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '28px',
-  flex: '0 0 auto',
-};
-
-const logoStyles = {
-  fontSize: '2.2rem',
-  fontWeight: '700',
-  color: '#fff',
-  textShadow: '0 0 8px #00dfc4',
-  cursor: 'default',
-  userSelect: 'none',
-  transition: 'text-shadow 0.3s ease',
-};
-
-const iconLinkStyles = {
-  color: '#fff',
-  textDecoration: 'none',
-  fontSize: '1.3rem',
-  transition: 'color 0.3s ease',
-  display: 'flex',
-  alignItems: 'center',
-};
-
 const menuLinkStyles = {
   color: '#fff',
   textDecoration: 'none',
-  fontSize: '1.05rem',
-  padding: '8px 16px',
-  borderRadius: '8px',
+  fontSize: '1rem',
+  padding: '8px 14px',
+  borderRadius: '6px',
   fontWeight: '500',
-  transition: 'all 0.25s cubic-bezier(0.4,0,0.2,1)',
+  transition: 'all 0.25s ease',
   userSelect: 'none',
 };
 
 const hoveredMenuStyle = {
   backgroundColor: '#00dfc4',
   color: '#000',
-  transform: 'translateY(-3px) scale(1.05)',
-  boxShadow: '0 8px 15px rgba(0, 223, 196, 0.35)',
+  transform: 'translateY(-2px)',
+  boxShadow: '0 6px 12px rgba(0, 223, 196, 0.25)',
 };
 
-const logoutButtonStyles = {
-  position: 'absolute',
-  top: '52px',
-  right: 0,
-  backgroundColor: '#fff',
-  border: '1px solid #ccc',
-  borderRadius: '6px',
-  padding: '8px 14px',
-  color: '#000',
-  fontWeight: '600',
-  fontSize: '0.95rem',
-  cursor: 'pointer',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  whiteSpace: 'nowrap',
-  zIndex: 1100,
-};
 
 export default ShoppingHeader;
