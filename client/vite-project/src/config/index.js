@@ -1,43 +1,43 @@
-export const registerFormControls=[
-    {
-        name:'User name',
-        label:'USER NAME',
-        placeholder:'Enter your user name',
-        componentype:'input',
-        type:'text',
-    },
-    {
-        name:'email',
-        label:'EMAIL',
-        placeholder:'Enter your email',
-        componentype:'input',
-        type:'text',
-    },
-    {
-        name:'password',
-        label:'PASSWORD',
-        placeholder:'Enter your password',
-        componentype:'input',
-        type:'text',
-    }
+export const registerFormControls = [
+  {
+    name: 'User name',
+    label: 'USER NAME',
+    placeholder: 'Enter your user name',
+    componentype: 'input',
+    type: 'text',
+  },
+  {
+    name: 'email',
+    label: 'EMAIL',
+    placeholder: 'Enter your email',
+    componentype: 'input',
+    type: 'text',
+  },
+  {
+    name: 'password',
+    label: 'PASSWORD',
+    placeholder: 'Enter your password',
+    componentype: 'input',
+    type: 'text',
+  }
 ]
 
 export const adminSidebarMenuItems = [
-    {
-        id: "dashboard",
-        label: "Dashboard",
-        path: "/admin/dashboard",
-      },
-      {
-        id: "products",
-        label: "Products",
-        path: "/admin/products",
-      },
-      {
-        id: "orders",
-        label: "Orders",
-        path: "/admin/orders",
-      }
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    path: "/admin/dashboard",
+  },
+  {
+    id: "products",
+    label: "Products",
+    path: "/admin/products",
+  },
+  {
+    id: "orders",
+    label: "Orders",
+    path: "/admin/orders",
+  }
 ]
 
 
@@ -101,4 +101,37 @@ export const addProductFormElements = [
     type: "number",
     placeholder: "Enter total stock",
   },
+];
+
+export const shoppingviewMenuItems = [
+  {
+    id: 'home',
+    label: 'Home',
+    path: '/shop/home'
+  },
+  {
+    id: 'men',
+    label: 'Men',
+    path: '/shop/listing?category=men'
+  },
+  {
+    id: 'women',
+    label: 'Women',
+    path: '/shop/listing?category=women'
+  },
+  {
+    id: 'kids',
+    label: 'Kids',
+    path: '/shop/listing?category=kids'
+  },
+  {
+    id: 'accessories',
+    label: 'Accessories',
+    path: '/shop/listing?category=accessories'
+  },
+  {
+    id: 'footwear',
+    label: 'Footwear',
+    path: '/shop/listing?category=footwear'
+  }
 ];

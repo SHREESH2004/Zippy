@@ -11,7 +11,7 @@ import AdminOrders from './pages/admin/orders';
 import ShoppingLayout from '../components/shopping/layout';
 import PageNotFound from './pages/notfound/no';
 import Homepage from './pages/auth/Home';
-import List from './pages/shopping/list';
+import listing from './pages/shopping/list';
 import Checkout from './pages/shopping/checkout';
 import Account from './pages/shopping/account';
 import { useDispatch, useSelector } from 'react-redux';
@@ -63,7 +63,7 @@ function App() {
           }
         >
           <Route path="home" element={<Home />} />
-          <Route path="list" element={<List />} />
+          <Route path="listing" element={<listing />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="account" element={<Account />} />
         </Route>
