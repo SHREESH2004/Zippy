@@ -102,7 +102,7 @@ const ShoppingHeader = () => {
           margin-left: 12px;
           background: transparent;
           color:rgb(247, 246, 246);
-          border: 2px rgb(15, 15, 15);
+          border: 2px rgb(14, 13, 13);
           padding: 6px 12px;
           font-size: 1rem;
           border-radius: 6px;
