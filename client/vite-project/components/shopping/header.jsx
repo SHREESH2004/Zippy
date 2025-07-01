@@ -108,6 +108,7 @@ const ShoppingHeader = () => {
       </header>
 
       {/* Sidebar Drawer */}
+      {/* Sidebar Drawer */}
       <div className={`sidebar ${showSidebar ? 'open' : ''}`}>
         <div className="sidebar-header">
           <span>Zippy Menu</span>
@@ -115,15 +116,18 @@ const ShoppingHeader = () => {
         </div>
 
         <div className="sidebar-links">
-          {shoppingviewMenuItems.map((item) => (
-            <Link
-              key={item.id}
-              to={`${item.path}?category=${item.id}`}
-              onClick={toggleSidebar}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {/* Mobile-friendly vertical menu */}
+          <div className="sidebar-menu-section">
+            {shoppingviewMenuItems.map((item) => (
+              <Link
+                key={item.id}
+                to={`${item.path}?category=${item.id}`}
+                onClick={toggleSidebar}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
 
           {username && (
             <>
@@ -138,6 +142,7 @@ const ShoppingHeader = () => {
           )}
         </div>
       </div>
+
 
       {/* Styles */}
       <style>{`
@@ -246,22 +251,32 @@ const ShoppingHeader = () => {
           font-size: 1.2rem;
         }
 
-        .sidebar-links a,
-        .sidebar-links button {
-          color: white;
-          background: none;
-          border: none;
-          text-align: left;
-          font-size: 1rem;
-          padding: 10px 0;
-          cursor: pointer;
-          width: 100%;
-        }
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-        .sidebar-links a:hover,
-        .sidebar-links button:hover {
-          color: #00dfc4;
-        }
+.sidebar-menu-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.sidebar-menu-section a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 8px 0;
+  transition: color 0.2s ease;
+}
+
+.sidebar-menu-section a:hover {
+  color: #00dfc4;
+}
+
 
         @media (max-width: 768px) {
           .menu-desktop {
