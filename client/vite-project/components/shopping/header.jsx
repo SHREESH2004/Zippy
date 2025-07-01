@@ -11,11 +11,13 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
 import { shoppingviewMenuItems } from '../../src/config';
+
 const ShoppingHeader = () => {
   const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
   const username = auth?.user?.username;
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
 
   const handleLogout = () => {
@@ -29,6 +31,10 @@ const ShoppingHeader = () => {
     setShowDropdown(prev => !prev);
   };
 
+  const toggleSidebar = () => {
+    setShowSidebar(prev => !prev);
+  };
+
   const getInitials = (name) => {
     if (!name) return '';
     const parts = name.trim().split(' ');
@@ -36,72 +42,109 @@ const ShoppingHeader = () => {
   };
 
   return (
-<header style={headerStyles}>
-  <div style={leftSection}>
-    <div style={logoStyles}>Zippy</div>
-    {username && (
-      <button
-        className="hi-user-btn"
-        onClick={() => navigate('/shopping/profile')}
-      >
-        <strong>{username}</strong>
-      </button>
-    )}
-  </div>
+    <>
+      <header style={headerStyles}>
+        <div style={leftSection}>
+          <div style={logoStyles}>Zippy</div>
 
+          <button className="menu-toggle" onClick={toggleSidebar}>
+            <AlignJustify size={24} />
+          </button>
 
-      {/* Center: Shopping Menu Items */}
-      <nav style={centerSection}>
-        {shoppingviewMenuItems.map((item) => (
-          <Link
-            key={item.id}
-            to={`${item.path}?category=${item.id}`}
-            style={{
-              ...menuLinkStyles,
-              ...(hoveredItem === item.id ? hoveredMenuStyle : {})
-            }}
-            onMouseEnter={() => setHoveredItem(item.id)}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            {item.label}
+          {username && (
+            <button
+              className="hi-user-btn"
+              onClick={() => navigate('/shopping/profile')}
+            >
+              <strong>{username}</strong>
+            </button>
+          )}
+        </div>
+
+        <nav style={centerSection} className="menu-desktop">
+          {shoppingviewMenuItems.map((item) => (
+            <Link
+              key={item.id}
+              to={`${item.path}?category=${item.id}`}
+              style={{
+                ...menuLinkStyles,
+                ...(hoveredItem === item.id ? hoveredMenuStyle : {})
+              }}
+              onMouseEnter={() => setHoveredItem(item.id)}
+              onMouseLeave={() => setHoveredItem(null)}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div style={rightSection}>
+          <Link to="/shopping/profile" style={iconLinkStyles} title="Profile">
+            <CircleUserRound />
           </Link>
-        ))}
-      </nav>
+          <Link to="/shopping/cart" style={iconLinkStyles} title="Cart">
+            <ShoppingCart />
+          </Link>
 
-
-      <div style={rightSection}>
-        <Link to="/shopping/profile" style={iconLinkStyles} title="Profile">
-          <CircleUserRound />
-        </Link>
-        <Link to="/shopping/cart" style={iconLinkStyles} title="Cart">
-          <ShoppingCart />
-        </Link>
-
-        {username && (
-          <div style={{ position: 'relative' }}>
-            <div className="user-circle" onClick={toggleDropdown}>
-              {getInitials(username)}
-            </div>
-
-            {showDropdown && (
-              <div className="dropdown">
-                <button onClick={() => navigate('/shopping/profile')}>
-                  <User size={16} style={{ marginRight: 6 }} /> Account
-                </button>
-                <button onClick={handleLogout}>
-                  <LogOut size={16} style={{ marginRight: 6 }} /> Logout
-                </button>
+          {username && (
+            <div style={{ position: 'relative' }}>
+              <div className="user-circle" onClick={toggleDropdown}>
+                {getInitials(username)}
               </div>
-            )}
-          </div>
-        )}
+
+              {showDropdown && (
+                <div className="dropdown">
+                  <button onClick={() => navigate('/shopping/profile')}>
+                    <User size={16} style={{ marginRight: 6 }} /> Account
+                  </button>
+                  <button onClick={handleLogout}>
+                    <LogOut size={16} style={{ marginRight: 6 }} /> Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Sidebar Drawer */}
+      <div className={`sidebar ${showSidebar ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <span>Zippy Menu</span>
+          <button onClick={toggleSidebar}>✕</button>
+        </div>
+
+        <div className="sidebar-links">
+          {shoppingviewMenuItems.map((item) => (
+            <Link
+              key={item.id}
+              to={`${item.path}?category=${item.id}`}
+              onClick={toggleSidebar}
+            >
+              {item.label}
+            </Link>
+          ))}
+
+          {username && (
+            <>
+              <hr />
+              <button onClick={() => { toggleSidebar(); navigate('/shopping/profile'); }}>
+                <User size={16} style={{ marginRight: 6 }} /> Profile
+              </button>
+              <button onClick={() => { toggleSidebar(); handleLogout(); }}>
+                <LogOut size={16} style={{ marginRight: 6 }} /> Logout
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
+      {/* Styles */}
       <style>{`
         .hi-user-btn {
           margin-left: 12px;
           background: transparent;
-          color:rgb(247, 246, 246);
+          color: rgb(247, 246, 246);
           border: 2px rgb(14, 13, 13);
           padding: 6px 12px;
           font-size: 1rem;
@@ -111,7 +154,7 @@ const ShoppingHeader = () => {
         }
 
         .hi-user-btn:hover {
-          background-color:rgb(247, 252, 252);
+          background-color: rgb(247, 252, 252);
           color: #000;
         }
 
@@ -166,8 +209,71 @@ const ShoppingHeader = () => {
         .dropdown button:hover {
           background-color: #f3f3f3;
         }
+
+        .menu-toggle {
+          display: none;
+          background: none;
+          border: none;
+          color: white;
+          cursor: pointer;
+        }
+
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: -100%;
+          width: 260px;
+          height: 100vh;
+          background: #111;
+          color: white;
+          padding: 24px;
+          z-index: 2000;
+          transition: left 0.3s ease;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .sidebar.open {
+          left: 0;
+        }
+
+        .sidebar-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+          font-size: 1.2rem;
+        }
+
+        .sidebar-links a,
+        .sidebar-links button {
+          color: white;
+          background: none;
+          border: none;
+          text-align: left;
+          font-size: 1rem;
+          padding: 10px 0;
+          cursor: pointer;
+          width: 100%;
+        }
+
+        .sidebar-links a:hover,
+        .sidebar-links button:hover {
+          color: #00dfc4;
+        }
+
+        @media (max-width: 768px) {
+          .menu-desktop {
+            display: none;
+          }
+
+          .menu-toggle {
+            display: block;
+          }
+        }
       `}</style>
-    </header>
+    </>
   );
 };
 
@@ -199,7 +305,7 @@ const rightSection = {
 const logoStyles = {
   fontSize: '2.2rem',
   fontWeight: '700',
-  color:  '#00dfc4',
+  color: '#00dfc4',
   cursor: 'default',
   userSelect: 'none',
 };
@@ -212,6 +318,7 @@ const iconLinkStyles = {
   alignItems: 'center',
   transition: 'color 0.3s ease',
 };
+
 const centerSection = {
   display: 'flex',
   alignItems: 'center',
@@ -237,6 +344,5 @@ const hoveredMenuStyle = {
   transform: 'translateY(-2px)',
   boxShadow: '0 6px 12px rgba(0, 223, 196, 0.25)',
 };
-
 
 export default ShoppingHeader;
