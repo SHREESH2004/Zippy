@@ -42,6 +42,10 @@ const ShoppingHeader = () => {
     return parts.slice(0, 2).map(p => p.charAt(0).toUpperCase()).join('');
   };
   const truckSize = 32;
+  const getFirstName = (fullName) => {
+    if (!fullName) return '';
+    return fullName.trim().split(' ')[0];
+  };
   return (
     <>
       <header style={headerStyles}>
@@ -60,9 +64,10 @@ const ShoppingHeader = () => {
               className="hi-user-btn"
               onClick={() => navigate('/shopping/profile')}
             >
-              <strong>{username}</strong>
+              Welcome <strong>{getFirstName(username)}</strong>
             </button>
           )}
+
         </div>
 
         <nav style={centerSection} className="menu-desktop">
