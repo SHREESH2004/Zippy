@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
 import { shoppingviewMenuItems } from '../../src/config';
+import { Truck, ShoppingBag } from 'lucide-react';
 
 const ShoppingHeader = () => {
   const navigate = useNavigate();
@@ -40,12 +41,15 @@ const ShoppingHeader = () => {
     const parts = name.trim().split(' ');
     return parts.slice(0, 2).map(p => p.charAt(0).toUpperCase()).join('');
   };
-
+  const truckSize = 32;
   return (
     <>
       <header style={headerStyles}>
         <div style={leftSection}>
-          <div style={logoStyles}>Zippy</div>
+          <div style={containerStyles}>
+            <div style={{ ...logoStyles, fontSize: `${truckSize}px` }}>Zippy</div>
+            <ShoppingBag width={truckSize} height={truckSize} />
+          </div>
 
           <button className="menu-toggle" onClick={toggleSidebar}>
             <AlignJustify size={24} />
@@ -79,12 +83,13 @@ const ShoppingHeader = () => {
         </nav>
 
         <div style={rightSection}>
-          <Link to="/shopping/profile" style={iconLinkStyles} title="Profile">
+          <Link to="/shopping/profile" className="icon-link" title="Profile">
             <CircleUserRound />
           </Link>
-          <Link to="/shopping/cart" style={iconLinkStyles} title="Cart">
+          <Link to="/shopping/cart" className="icon-link" title="Cart">
             <ShoppingCart />
           </Link>
+
 
           {username && (
             <div style={{ position: 'relative' }}>
@@ -250,6 +255,14 @@ const ShoppingHeader = () => {
           margin-bottom: 16px;
           font-size: 1.2rem;
         }
+.icon-link {
+  color: #888; /* default color */
+  transition: color 0.3s ease;
+}
+
+.icon-link:hover {
+  color: #00dfc4; /* accent color on hover */
+}
 
 .sidebar-links {
   display: flex;
@@ -317,22 +330,7 @@ const rightSection = {
   gap: '24px',
 };
 
-const logoStyles = {
-  fontSize: '2.2rem',
-  fontWeight: '700',
-  color: '#00dfc4',
-  cursor: 'default',
-  userSelect: 'none',
-};
 
-const iconLinkStyles = {
-  color: '#fff',
-  fontSize: '1.3rem',
-  textDecoration: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  transition: 'color 0.3s ease',
-};
 
 const centerSection = {
   display: 'flex',
@@ -358,6 +356,22 @@ const hoveredMenuStyle = {
   color: '#000',
   transform: 'translateY(-2px)',
   boxShadow: '0 6px 12px rgba(0, 223, 196, 0.25)',
+};
+const containerStyles = {
+  display: 'flex',
+  alignItems: 'center',  // vertically center text and icon
+  gap: '0.4rem',          // some space between text and icon
+};
+
+const logoStyles = {
+  fontSize: '2.8rem',     // increase size to match icon height (adjust as needed)
+  fontWeight: '700',
+  color: '#ffffff',
+  fontFamily: `'Poppins', sans-serif`,
+  letterSpacing: '0.07em',
+  textTransform: 'uppercase',
+  textShadow: '0 2px 5px rgba(0, 0, 0, 0.4)',
+  margin: 0,
 };
 
 export default ShoppingHeader;
