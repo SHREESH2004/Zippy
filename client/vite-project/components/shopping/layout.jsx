@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import ShoppingHeader from './header';
+import Filter from '../../src/pages/shopping/filter'; // Correct casing
 
 const ShoppingLayout = () => {
   return (
@@ -9,6 +10,7 @@ const ShoppingLayout = () => {
       <main style={mainStyles}>
         <Outlet /> {/* All child routes render here */}
       </main>
+      <Filter />
     </div>
   );
 };

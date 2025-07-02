@@ -1,8 +1,7 @@
+import React from 'react'
 
+const Filter = () => {
+    return <div>Filter Component</div>;
+};
 
-function ShoppingListing(){
-    return <div>
-
-    </div>
-}
-export default ShoppingListing;
+export default Filter;
