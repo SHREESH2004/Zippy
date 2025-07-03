@@ -50,10 +50,14 @@ const ShoppingHeader = () => {
     <>
       <header style={headerStyles}>
         <div style={leftSection}>
-          <div style={containerStyles}>
+          <div
+            style={{ ...containerStyles, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            onClick={() => window.location.reload()}
+          >
             <div style={{ ...logoStyles, fontSize: `${truckSize}px` }}>Zippy</div>
             <ShoppingBag width={truckSize} height={truckSize} />
           </div>
+
 
           <button className="menu-toggle" onClick={toggleSidebar}>
             <AlignJustify size={24} />

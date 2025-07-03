@@ -30,8 +30,9 @@ export const addProduct = async (req, res) => {
 
 export const fetchProducts = async (req, res) => {
     try {
-        const { search } = req.query;
+        const { search, brand, category } = req.query;
 
+        // If a search by product title is provided
         if (search) {
             const product = await Product.findOne({ title: search });
 
@@ -60,10 +61,18 @@ export const fetchProducts = async (req, res) => {
             });
         }
 
-        const products = await Product.find();
+        // If brand or category are provided, filter accordingly
+        let filter = {};
+        if (brand) filter.brand = brand;
+        if (category) filter.category = category;
+
+        const products = await Product.find(filter);
+
         res.status(200).json({
             success: true,
-            message: "All products fetched",
+            message: Object.keys(filter).length
+                ? `Products filtered by ${Object.keys(filter).join(" and ")}`
+                : "All products fetched",
             data: products
         });
     } catch (e) {
@@ -75,7 +84,6 @@ export const fetchProducts = async (req, res) => {
     }
 };
 
-// ✅ Delete Product by ID
 export const deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
@@ -141,10 +149,7 @@ export const editProduct = async (req, res) => {
 };
 export const fetchAllProducts = async (req, res) => {
     try {
-        // Fetch all products from the database
         const products = await Product.find();
-
-        // Return the fetched products as a response
         res.status(200).json({
             success: true,
             message: "All products fetched successfully",
@@ -152,8 +157,6 @@ export const fetchAllProducts = async (req, res) => {
         });
     } catch (e) {
         console.error("Fetch All Products Error:", e);
-
-        // Return error response in case of failure
         res.status(500).json({
             success: false,
             message: "Server error while fetching all products"

@@ -1,16 +1,17 @@
 export const filteroption = {
     category: [
-        { id: "men", label: "Men" },
-        { id: "woman", label: "Woman" },
-        { id: "kids", label: "Kids" },
-        { id: "accessories", label: "Accessories" },
-        { id: "footwear", label: "Footwear" },
+        { id: "Men", label: "Men" },
+        { id: "Woman", label: "Woman" },
+        { id: "Kids", label: "Kids" },
+        { id: "Unisex", label: "Unisex" },
+        { id: "Accessories", label: "Accessories" },
+        { id: "Footwear", label: "Footwear" },
     ],
     brand: [
-        { id: "nike", label: "Nike" },
-        { id: "adidas", label: "Adidas" },
-        { id: "puma", label: "Puma" },
-        { id: "zara", label: "Zara" },
-        { id: "h&m", label: "H&M" },
+        { id: "Nike", label: "Nike" },
+        { id: "Adidas", label: "Adidas" },
+        { id: "Puma", label: "Puma" },
+        { id: "Zara", label: "Zara" },
+        { id: "H&M", label: "H&M" },
     ],
 };

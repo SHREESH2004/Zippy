@@ -2,17 +2,24 @@ import React, { useState } from 'react';
 import { filteroption } from '../admin';
 import { Store } from 'lucide-react';
 
-const Filter = () => {
+const Filter = ({ onApplyFilters }) => {
   const [selectedFilters, setSelectedFilters] = useState({
     category: [],
     brand: [],
   });
   const [isClicked, setIsClicked] = useState(false);
 
-
   const handleApplyFilters = () => {
     console.log('Applying filters:', selectedFilters);
-    // You can pass filters to a parent component or trigger a fetch here
+
+    // 🟢 Call the passed-in function with filters
+    if (onApplyFilters) {
+      onApplyFilters(selectedFilters);
+    }
+
+    // Button animation reset
+    setIsClicked(true);
+    setTimeout(() => setIsClicked(false), 150);
   };
 
   const handleCheckboxChange = (filterType, id) => {
@@ -31,14 +38,15 @@ const Filter = () => {
 
   return (
     <aside style={styles.sidebar}>
-      <br />
-      <br />
-      <br />
-      <br />
+      <br /><br /><br /><br />
 
-      <h6 style={styles.browseStyles}>
-        <Store />Browse
+      <h6
+        style={{ ...styles.browseStyles, cursor: 'pointer' }}
+        onClick={() => window.location.reload()}
+      >
+        <Store /> Browse
       </h6>
+
 
       <div style={styles.divider} />
 
@@ -83,25 +91,21 @@ const Filter = () => {
             </div>
           );
         })}
+
         <button
           style={{
             ...styles.filterButton,
             ...(isClicked ? styles.filterButtonClicked : {}),
           }}
-          onClick={() => {
-            setIsClicked(true);
-            handleApplyFilters();
-            setTimeout(() => setIsClicked(false), 150); // Reset after 150ms
-          }}
+          onClick={handleApplyFilters}
         >
           Apply Filters
         </button>
-
       </div>
-
     </aside>
   );
 };
+
 
 const styles = {
   filterButtonClicked: {
@@ -109,20 +113,20 @@ const styles = {
     boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.25)',
   },
 
-filterButton: {
-  marginTop: '12px',
-  padding: '8px 14px',              // Smaller padding
-  backgroundColor: '#28a745',       // Green background
-  color: '#ffffff',                 // White text
-  border: 'none',
-  borderRadius: '6px',
-  fontWeight: '600',
-  fontSize: '13px',                 // Slightly smaller font
-  cursor: 'pointer',
-  fontFamily: "'Poppins', sans-serif",
-  transition: 'background-color 0.3s ease',
-  boxShadow: '0 3px 8px rgba(40, 167, 69, 0.25)',
-},
+  filterButton: {
+    marginTop: '12px',
+    padding: '8px 14px',              // Smaller padding
+    backgroundColor: '#28a745',       // Green background
+    color: '#ffffff',                 // White text
+    border: 'none',
+    borderRadius: '6px',
+    fontWeight: '600',
+    fontSize: '13px',                 // Slightly smaller font
+    cursor: 'pointer',
+    fontFamily: "'Poppins', sans-serif",
+    transition: 'background-color 0.3s ease',
+    boxShadow: '0 3px 8px rgba(40, 167, 69, 0.25)',
+  },
 
 
 

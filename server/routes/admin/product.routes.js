@@ -12,18 +12,15 @@ import {
 
 const router = express.Router();
 
-// Configure Multer to store files in memory
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// ✅ Image Upload Route
 router.post('/upload', upload.single('image'), imageupload);
 
-// ✅ Product Routes
-router.post('/products', addProduct);               // Add product
-router.get('/products', fetchProducts);             // Fetch all or search
-router.put('/products/:id', editProduct);           // Edit product
-router.delete('/products/:id', deleteProduct);      // Delete product
-router.get('/fetchall',fetchAllProducts);
+router.post('/products', addProduct);
+router.get('/products', fetchProducts);
+router.put('/products/:id', editProduct);
+router.delete('/products/:id', deleteProduct);
+router.get('/products/all', fetchAllProducts);
 
 export default router;

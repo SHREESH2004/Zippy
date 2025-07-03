@@ -1,98 +1,35 @@
-import React, { useState } from 'react';
-import { ArrowDownUp } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllProducts } from '../../store/shop'; // Update the path as needed
+import { ArrowDownUp, CircleDollarSign } from 'lucide-react';
 import ProductCard from './Producttile';
-import { CircleDollarSign, Shirt, ShoppingBasket } from 'lucide-react';
+import Filter from './filter';
+import ProductDetailModal from './ProductDetailsMOdal';
 function Listing() {
+    const dispatch = useDispatch();
+    const { products, isLoading, error } = useSelector(state => state.shoppingProducts);
+
     const [sortBy, setSortBy] = useState('cost');
     const [isAsc, setIsAsc] = useState(true);
     const [hoveredId, setHoveredId] = useState(null);
     const [quantities, setQuantities] = useState({});
     const [searchTerm, setSearchTerm] = useState('');
-
-    const products = [
-        {
-            id: '685ee3aa71c5f89156590006',
-            name: 'Football For Men',
-            price: 60,
-            salePrice: 75,
-            date: '2025-06-27T18:32:10.023+00:00',
-            image: 'https://miro.medium.com/v2/resize:fit:7828/0*xbrqrNuVxRi7s7u9',
-            brand: 'Adidas',
-            category: 'Men',
-            totalStock: 2,
-        },
-        {
-            id: '685ee3aa71c5f89156590007',
-            name: 'Women’s Running Shoes',
-            price: 90,
-            salePrice: 120,
-            date: '2025-06-20T10:00:00.000+00:00',
-            image: 'https://images.unsplash.com/photo-1600185365524-5352b6f26f70?auto=format&fit=crop&w=800&q=80',
-            brand: 'Nike',
-            category: 'Women',
-            totalStock: 10,
-        },
-        {
-            id: '685ee3aa71c5f89156590008',
-            name: 'Bluetooth Earbuds',
-            price: 25,
-            salePrice: 40,
-            date: '2025-06-10T12:30:00.000+00:00',
-            image: 'https://images.unsplash.com/photo-1590608897129-79da98d159c3?auto=format&fit=crop&w=800&q=80',
-            brand: 'Boat',
-            category: 'Electronics',
-            totalStock: 30,
-        },
-        {
-            id: '685ee3aa71c5f89156590009',
-            name: 'Smart Fitness Watch',
-            price: 75,
-            salePrice: 99,
-            date: '2025-06-15T09:45:00.000+00:00',
-            image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80',
-            brand: 'Fitbit',
-            category: 'Wearables',
-            totalStock: 5,
-        },
-        {
-            id: '685ee3aa71c5f89156590010',
-            name: 'Classic Leather Wallet',
-            price: 35,
-            salePrice: 50,
-            date: '2025-06-18T14:10:00.000+00:00',
-            image: 'https://images.unsplash.com/photo-1582738412740-02eabb1d58f7?auto=format&fit=crop&w=800&q=80',
-            brand: 'Wildhorn',
-            category: 'Accessories',
-            totalStock: 20,
-        },
-        {
-            id: '685ee3aa71c5f89156590011',
-            name: 'Men’s Casual Shirt',
-            price: 45,
-            salePrice: 65,
-            date: '2025-06-22T16:00:00.000+00:00',
-            image: 'https://images.unsplash.com/photo-1587032373746-8a6a92909a12?auto=format&fit=crop&w=800&q=80',
-            brand: 'H&M',
-            category: 'Men',
-            totalStock: 15,
-        },
-        {
-            id: '685ee3aa71c5f89156590012',
-            name: 'Noise Cancelling Headphones',
-            price: 110,
-            salePrice: 150,
-            date: '2025-06-28T11:30:00.000+00:00',
-            image: 'https://images.unsplash.com/photo-1580894732444-335e420441a4?auto=format&fit=crop&w=800&q=80',
-            brand: 'Sony',
-            category: 'Electronics',
-            totalStock: 8,
-        },
-    ];
+    const [filters, setFilters] = useState({ category: [], brand: [] });  // Added filter state
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
 
+    // Fetch products on mount and whenever filters change
+    useEffect(() => {
+        dispatch(fetchAllProducts(filters));
+    }, [dispatch, filters]);
+
+    // Receive filters from Filter component
+    const handleApplyFilters = (selectedFilters) => {
+        setFilters(selectedFilters);
+    };
 
     const filteredProducts = products.filter(p =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+        p.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleAddToCart = (productId) => {
@@ -119,8 +56,8 @@ function Listing() {
         }
         if (sortBy === 'date') {
             return isAsc
-                ? new Date(a.date) - new Date(b.date)
-                : new Date(b.date) - new Date(a.date);
+                ? new Date(a.createdAt) - new Date(b.createdAt)
+                : new Date(b.createdAt) - new Date(a.createdAt);
         }
         return 0;
     });
@@ -128,85 +65,112 @@ function Listing() {
     const toggleSortDirection = () => setIsAsc(!isAsc);
 
     return (
-        <div style={styles.container}>
-            {/* Title and search flex wrapper */}
-            <div style={styles.titleSearchWrapper}>
-                <h2 style={styles.title}>
-                    Discover <span style={{ ...styles.highlight, color: '#28a745' }}>Premium Picks</span> at{' '}
-                    <span style={{ ...styles.highlight, color: '#ff9800' }}>Best Deals</span>
-                    <CircleDollarSign
-                        size={24}
-                        style={{
-                            verticalAlign: 'middle',
-                            color: '#ff9800',
-                            marginLeft: '3px',
-                            marginRight: '3px',
-                        }}
-                    />
-                    only on <span style={{ ...styles.brand, color: '#0069d9' }}>Zippy</span>
-                </h2>
+        <>
+            {/* Page layout with sidebar and main content */}
+            <div style={{ display: 'flex' }}>
+                {/* Sidebar filter */}
+                <Filter onApplyFilters={handleApplyFilters} />
 
+                {/* Main content container */}
+                <div style={styles.container}>
+                    {/* Title + search bar */}
+                    <div style={styles.titleSearchWrapper}>
+                        <h2 style={styles.title}>
+                            Discover <span style={{ ...styles.highlight, color: '#28a745' }}>Premium Picks</span> at{' '}
+                            <span style={{ ...styles.highlight, color: '#ff9800' }}>Best Deals</span>
+                            <CircleDollarSign
+                                size={24}
+                                style={{
+                                    verticalAlign: 'middle',
+                                    marginLeft: '3px',
+                                    marginRight: '3px',
+                                    color: '#ff9800'
+                                }}
+                            />
+                            only on <span style={{ ...styles.brand, color: '#0069d9' }}>Zippy</span>
+                        </h2>
 
+                        <input
+                            type="text"
+                            placeholder="Search best deals on Zippy — products, brands & more..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                            style={styles.searchInput}
+                        />
+                    </div>
 
-                <input
-                    type="text"
-                    placeholder="Search best deals on Zippy — products, brands & more..."
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    style={styles.searchInput}
+                    {/* Sorting bar */}
+                    <div style={styles.topBar}>
+                        <div>
+                            Showing <strong>{sortedProducts.length}</strong> products
+                        </div>
+
+                        <div style={styles.sortSection}>
+                            <label htmlFor="sortSelect" style={styles.sortLabel}>Sort by:</label>
+                            <select
+                                id="sortSelect"
+                                value={sortBy}
+                                onChange={e => setSortBy(e.target.value)}
+                                style={styles.sortSelect}
+                            >
+                                <option value="cost">Cost</option>
+                                <option value="date">Date</option>
+                            </select>
+
+                            <ArrowDownUp
+                                size={20}
+                                style={{
+                                    marginLeft: 8,
+                                    cursor: 'pointer',
+                                    transform: isAsc ? 'rotate(0deg)' : 'rotate(180deg)',
+                                    transition: 'transform 0.3s ease',
+                                }}
+                                onClick={toggleSortDirection}
+                                title={isAsc ? 'Ascending' : 'Descending'}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Product Grid */}
+                    <div style={styles.grid}>
+                        {isLoading ? (
+                            <p>Loading products...</p>
+                        ) : error ? (
+                            <p style={{ color: 'red' }}>Error: {error}</p>
+                        ) : (
+                            sortedProducts.map(product => (
+                                <ProductCard
+                                    key={product._id}
+                                    product={product}
+                                    hoveredId={hoveredId}
+                                    setHoveredId={setHoveredId}
+                                    quantity={quantities[product._id] || 0}
+                                    onAddToCart={handleAddToCart}
+                                    onRemoveFromCart={handleRemoveFromCart}
+                                    styles={styles}
+                                    onSelect={setSelectedProduct}
+                                />
+                            ))
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Product detail modal overlay */}
+            {selectedProduct && (
+                <ProductDetailModal
+                    product={selectedProduct}
+                    onClose={() => setSelectedProduct(null)}
+                    onAddToCart={handleAddToCart}
+                    onRemoveFromCart={handleRemoveFromCart}
+                    quantity={quantities[selectedProduct._id] || 0}
                 />
-            </div>
+            )}
 
-            {/* Top bar */}
-            <div style={styles.topBar}>
-                <div>
-                    Showing <strong>{sortedProducts.length}</strong> products
-                </div>
-                <div style={styles.sortSection}>
-                    <label htmlFor="sortSelect" style={styles.sortLabel}>Sort by:</label>
-                    <select
-                        id="sortSelect"
-                        value={sortBy}
-                        onChange={e => setSortBy(e.target.value)}
-                        style={styles.sortSelect}
-                    >
-                        <option value="cost">Cost</option>
-                        <option value="date">Date</option>
-                    </select>
 
-                    <ArrowDownUp
-                        size={20}
-                        style={{
-                            marginLeft: 8,
-                            cursor: 'pointer',
-                            transition: 'transform 0.3s ease',
-                            transform: isAsc ? 'rotate(0deg)' : 'rotate(180deg)',
-                            color: '#333',
-                        }}
-                        onClick={toggleSortDirection}
-                        title={isAsc ? 'Ascending' : 'Descending'}
-                    />
-                </div>
-            </div>
-
-            {/* Product grid */}
-            <div style={styles.grid}>
-                {sortedProducts.map(product => (
-                    <ProductCard
-                        key={product.id}
-                        product={product}
-                        hoveredId={hoveredId}
-                        setHoveredId={setHoveredId}
-                        quantity={quantities[product.id] || 0}
-                        onAddToCart={handleAddToCart}
-                        onRemoveFromCart={handleRemoveFromCart}
-                        styles={styles}
-                    />
-                ))}
-            </div>
-
-        </div>
+        </>
     );
+
 }
 
 const styles = {
@@ -393,7 +357,7 @@ const styles = {
 
     image: {
         width: '100%',
-        height: '400px',
+        height: '350px',
         marginBottom: '12px',
         borderRadius: '6px',
         objectFit: 'cover',

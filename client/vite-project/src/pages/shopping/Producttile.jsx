@@ -7,32 +7,57 @@ function ProductCard({
     quantity,
     onAddToCart,
     onRemoveFromCart,
-    styles
+    styles,
+    onSelect // ✅ Add this
 }) {
     const isDiscounted = product.salePrice > product.price;
+
+    // Prevent modal trigger on button clicks
+    const handleCardClick = (e) => {
+        // If the click target is a button or inside a button, do nothing
+        if (
+            e.target.tagName === 'BUTTON' ||
+            e.target.closest('button')
+        ) return;
+
+        onSelect && onSelect(product); // ✅ Trigger modal
+    };
 
     return (
         <div
             style={{
                 ...styles.card,
-                transform: hoveredId === product.id ? 'translateY(-8px)' : 'translateY(0)',
+                transform: hoveredId === product._id ? 'translateY(-8px)' : 'translateY(0)',
                 boxShadow:
-                    hoveredId === product.id
+                    hoveredId === product._id
                         ? '0 8px 16px rgba(0,0,0,0.15)'
                         : '0 2px 5px rgba(0,0,0,0.05)',
+                display: 'flex',
+                flexDirection: 'column',
+                cursor: 'pointer', // ✅ Make it feel clickable
             }}
-            onMouseEnter={() => setHoveredId(product.id)}
+            onMouseEnter={() => setHoveredId(product._id)}
             onMouseLeave={() => setHoveredId(null)}
+            onClick={handleCardClick} // ✅ Handles modal open
         >
             <img
                 src={product.image || 'https://via.placeholder.com/150'}
                 alt={product.name}
                 style={styles.image}
             />
-            
+
+            <p style={{
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#666',
+                margin: '4px 0',
+                fontFamily: "'Poppins', sans-serif",
+            }}>
+                {product.title}
+            </p>
+
             <h3 style={styles.productName}>{product.name}</h3>
 
-            {/* Show price with optional strikethrough sale price */}
             <div>
                 {isDiscounted && (
                     <span style={{
@@ -44,28 +69,27 @@ function ProductCard({
                         ${product.salePrice.toFixed(2)}
                     </span>
                 )}
-                <span style={{
-                    color: '#007bff',
-                    fontWeight: 'bold',
-                    fontSize: '14.5px'
-                }}>
+                <span style={styles.price}>
                     ${product.price.toFixed(2)}
                 </span>
             </div>
 
-            {/* Stock display */}
             <p style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>
                 Stock: {product.totalStock}
             </p>
 
-            {/* Date added */}
-            <p style={styles.date}>Added: {new Date(product.date).toLocaleDateString()}</p>
+            <p style={styles.date}>
+                Added: {new Date(product.createdAt).toLocaleDateString()}
+            </p>
 
-            {/* Action row: add/remove cart */}
-            <div style={styles.actionRow}>
+            <div style={{ ...styles.actionRow, marginTop: 'auto' }}>
                 <button
                     style={styles.addButton}
-                    onClick={() => onAddToCart(product.id)}
+                    onClick={(e) => {
+                        e.stopPropagation(); // ✅ prevent modal
+                        console.log('Added product:', product); // <-- Log product added
+                        onAddToCart(product._id);
+                    }}
                     disabled={quantity >= product.totalStock}
                 >
                     + Add
@@ -76,14 +100,19 @@ function ProductCard({
                         <span style={styles.quantityText}>x{quantity}</span>
                         <button
                             style={styles.removeButton}
-                            onClick={() => onRemoveFromCart(product.id)}
+                            onClick={(e) => {
+                                e.stopPropagation(); // ✅ prevent modal
+                                onRemoveFromCart(product._id);
+                            }}
                         >
                             − Remove
                         </button>
                     </>
                 )}
             </div>
+
         </div>
+
     );
 }
 
