@@ -1,6 +1,4 @@
 import { Product } from "../models/product.model.js";
-
-// ✅ Add Product
 export const addProduct = async (req, res) => {
     try {
         const newProduct = new Product(req.body);
@@ -30,7 +28,6 @@ export const addProduct = async (req, res) => {
     }
 };
 
-// ✅ Fetch Products (with optional search or auto-add)
 export const fetchProducts = async (req, res) => {
     try {
         const { search } = req.query;
@@ -39,7 +36,6 @@ export const fetchProducts = async (req, res) => {
             const product = await Product.findOne({ title: search });
 
             if (!product) {
-                // Auto-add logic requires full product details
                 if (!req.body || Object.keys(req.body).length < 6) {
                     return res.status(404).json({
                         success: false,
@@ -104,8 +100,6 @@ export const deleteProduct = async (req, res) => {
         });
     }
 };
-
-// ✅ Edit Product by ID
 export const editProduct = async (req, res) => {
     try {
         const { id } = req.params;
@@ -145,7 +139,6 @@ export const editProduct = async (req, res) => {
         });
     }
 };
-// ✅ Fetch All Products (without search)
 export const fetchAllProducts = async (req, res) => {
     try {
         // Fetch all products from the database
