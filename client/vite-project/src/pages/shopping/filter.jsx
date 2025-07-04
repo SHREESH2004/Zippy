@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { filteroption } from '../admin';
-import { Store } from 'lucide-react';
 
 const Filter = ({ onApplyFilters }) => {
   const [selectedFilters, setSelectedFilters] = useState({
@@ -12,12 +11,10 @@ const Filter = ({ onApplyFilters }) => {
   const handleApplyFilters = () => {
     console.log('Applying filters:', selectedFilters);
 
-    // 🟢 Call the passed-in function with filters
     if (onApplyFilters) {
       onApplyFilters(selectedFilters);
     }
 
-    // Button animation reset
     setIsClicked(true);
     setTimeout(() => setIsClicked(false), 150);
   };
@@ -38,14 +35,6 @@ const Filter = ({ onApplyFilters }) => {
 
   return (
     <aside style={styles.sidebar}>
-      <br /><br /><br /><br />
-
-      <h6
-        style={{ ...styles.browseStyles, cursor: 'pointer' }}
-        onClick={() => window.location.reload()}
-      >
-        <Store /> Browse
-      </h6>
 
 
       <div style={styles.divider} />
@@ -73,25 +62,6 @@ const Filter = ({ onApplyFilters }) => {
       ))}
 
       <div style={styles.result}>
-        <strong style={styles.resultTitle}>Selected Filters:</strong>
-        {Object.entries(selectedFilters).map(([filterType, selectedIds]) => {
-          if (selectedIds.length === 0) return null;
-
-          const label = filterType.charAt(0).toUpperCase() + filterType.slice(1);
-          const selectedLabels = selectedIds
-            .map((id) => {
-              const match = filteroption[filterType].find((option) => option.id === id);
-              return match?.label || id;
-            })
-            .join(', ');
-
-          return (
-            <div key={filterType} style={{ marginBottom: '8px' }}>
-              <span style={styles.resultLabel}>{label}:</span> {selectedLabels}
-            </div>
-          );
-        })}
-
         <button
           style={{
             ...styles.filterButton,
@@ -101,6 +71,8 @@ const Filter = ({ onApplyFilters }) => {
         >
           Apply Filters
         </button>
+        <br />
+        <br />
       </div>
     </aside>
   );
@@ -114,132 +86,96 @@ const styles = {
   },
 
   filterButton: {
-    marginTop: '12px',
-    padding: '8px 14px',              // Smaller padding
-    backgroundColor: '#28a745',       // Green background
-    color: '#ffffff',                 // White text
+  padding: '10px 18px',
+    backgroundColor: '#28a745',
+    color: '#ffffff',
     border: 'none',
-    borderRadius: '6px',
+    borderRadius: '8px',
     fontWeight: '600',
-    fontSize: '13px',                 // Slightly smaller font
+    fontSize: '16px',
     cursor: 'pointer',
     fontFamily: "'Poppins', sans-serif",
     transition: 'background-color 0.3s ease',
-    boxShadow: '0 3px 8px rgba(40, 167, 69, 0.25)',
+    boxShadow: '0 4px 10px rgba(40, 167, 69, 0.25)',
   },
 
-
-
-  filterButtonHover: {
-    backgroundColor: '#e67e22',
+  sidebar: {
+    width: '230px',
+    maxHeight: 'calc(100vh - 40px)',
+    padding: '28px 22px',
+    background: '#ffffff',
+    color: '#000000',
+    borderRight: '1px solid #ddd',
+    position: 'fixed',
+    top: '20px',
+    left: 0,
+    overflowY: 'auto',
+    fontFamily: "'Poppins', sans-serif",
+    boxShadow: '2px 0 16px rgba(0,0,0,0.12)',
+    zIndex: 100,
   },
 
   browseStyles: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '0.5rem',
-    fontSize: '1.2rem',
+    fontSize: '20px',
     fontWeight: '600',
-    color: '#ffffff',
+    color: '#000000',
     cursor: 'pointer',
     userSelect: 'none',
     fontFamily: `'Poppins', sans-serif`,
-    textShadow: '0 1px 2px rgba(0, 0, 0, 0.4)',
     margin: 0,
-  },
-  sidebar: {
-    width: '240px',
-    minHeight: '100vh',
-    padding: '24px 18px',
-    background: 'linear-gradient(to bottom, #0d0d0d, #111)',
-    color: '#fff',
-    borderRight: '1px solid #1f1f1f',
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    overflowY: 'auto',
-    fontFamily: "'Poppins', sans-serif",
-    boxShadow: '2px 0 12px rgba(0,0,0,0.5)',
-    zIndex: 100,
-  },
-
-  title: {
-    fontSize: '15px',
-    fontWeight: 500,
-    marginBottom: '20px',
-    textTransform: 'uppercase',
-    letterSpacing: '1px',
-    color: '#f5f5f5',
-    opacity: 0.9,
-    display: 'flex',
-    alignItems: 'center',
-  },
-
-  section: {
-    marginBottom: '18px',
   },
 
   sectionTitle: {
-    fontSize: '12.5px',
+    fontSize: '16px',
     fontWeight: 600,
-    marginBottom: '10px',
+    marginBottom: '12px',
     textTransform: 'uppercase',
     letterSpacing: '1.2px',
-    color: '#eaeaea',
-    opacity: 0.85,
+    color: '#333',
   },
 
   checkboxLabel: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '8px',
+    marginBottom: '10px',
     cursor: 'pointer',
-    fontSize: '13px',
-    color: '#cfcfcf',
-    transition: 'all 0.2s ease',
-    padding: '4px 4px',
-    borderRadius: '5px',
+    fontSize: '15px',
+    color: '#222',
+    padding: '5px 5px',
+    borderRadius: '6px',
   },
 
-  checkbox: {
-    marginRight: '10px',
-    accentColor: '#f39c12',
-    transform: 'scale(1.1)',
-    cursor: 'pointer',
-  },
+result: {
+  marginTop: '8px', // reduced from 32px
+  fontSize: '15px',
+  color: '#000',
+  lineHeight: '1.6',
+},
 
-  checkboxText: {
-    transition: 'color 0.2s ease',
-  },
-
-  divider: {
-    border: 'none',
-    height: '1px',
-    backgroundColor: '#2b2b2b',
-    margin: '14px 0',
-    opacity: 0.5,
-  },
-
-  result: {
-    marginTop: '28px',
-    fontSize: '12.5px',
-    color: '#ccc',
-    lineHeight: '1.6',
-  },
 
   resultTitle: {
     display: 'block',
-    marginBottom: '10px',
-    color: '#fff',
-    fontSize: '13.5px',
+    marginBottom: '12px',
+    color: '#000',
+    fontSize: '17px',
     fontWeight: 600,
   },
 
   resultLabel: {
     fontWeight: 500,
-    color: '#f39c12',
+    color: '#e67e22',
+    fontSize: '15px'
+  },
+
+  divider: {
+    border: 'none',
+    height: '1px',
+    backgroundColor: '#ddd',
+    margin: '16px 0',
   },
 };
-
 
 export default Filter;

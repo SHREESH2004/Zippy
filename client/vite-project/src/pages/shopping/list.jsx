@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllProducts } from '../../store/shop'; // Update the path as needed
-import { ArrowDownUp, CircleDollarSign } from 'lucide-react';
+import { ArrowDownUp, CircleDollarSign,Store } from 'lucide-react';
 import ProductCard from './Producttile';
 import Filter from './filter';
 import ProductDetailModal from './ProductDetailsMOdal';
@@ -87,7 +87,7 @@ function Listing() {
                                     color: '#ff9800'
                                 }}
                             />
-                            only on <span style={{ ...styles.brand, color: '#0069d9' }}>Zippy</span>
+                            only on <span style={{ ...styles.brand, color: '#0069d9' }}>Zippy Stores</span>
                         </h2>
 
                         <input
