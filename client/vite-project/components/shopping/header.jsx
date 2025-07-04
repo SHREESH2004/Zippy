@@ -65,7 +65,7 @@ const ShoppingHeader = () => {
           {shoppingviewMenuItems.map((item) => (
             <Link
               key={item.id}
-              to={`${item.path}?category=${item.id}`}
+              to={`${item.path}`}
               style={{
                 ...menuLinkStyles,
                 ...(hoveredItem === item.id ? hoveredMenuStyle : {})
@@ -81,34 +81,34 @@ const ShoppingHeader = () => {
         </nav>
 
 
-<div style={rightSection}>
-  <Link to="/shopping/profile" className="icon-link" title="Profile">
-    <CircleUserRound />
-  </Link>
+        <div style={rightSection}>
+          <Link to="/shopping/profile" className="icon-link" title="Profile">
+            <CircleUserRound />
+          </Link>
 
-  {/* ✅ Add Cart Container beside Profile */}
-  <div style={{ marginLeft: '8px' }}>
-    <CartContainer />
-  </div>
+          {/* ✅ Add Cart Container beside Profile */}
+          <div style={{ marginLeft: '8px' }}>
+            <CartContainer />
+          </div>
 
-  {username && (
-    <div style={{ position: 'relative' }}>
-      <div className="user-circle" onClick={toggleDropdown}>
-        {getInitials(username)}
-      </div>
-      {showDropdown && (
-        <div className="dropdown">
-          <button onClick={() => navigate('/shopping/profile')}>
-            <User size={16} style={{ marginRight: 6 }} /> My Account
-          </button>
-          <button onClick={handleLogout}>
-            <LogOut size={16} style={{ marginRight: 6 }} /> Sign Out
-          </button>
+          {username && (
+            <div style={{ position: 'relative' }}>
+              <div className="user-circle" onClick={toggleDropdown}>
+                {getInitials(username)}
+              </div>
+              {showDropdown && (
+                <div className="dropdown">
+                  <button onClick={() => navigate('/shopping/profile')}>
+                    <User size={16} style={{ marginRight: 6 }} /> My Account
+                  </button>
+                  <button onClick={handleLogout}>
+                    <LogOut size={16} style={{ marginRight: 6 }} /> Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  )}
-</div>
 
       </header>
 
