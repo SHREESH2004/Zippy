@@ -7,16 +7,20 @@ import CartContainer from '../../src/pages/shopping/CartContainer';
 const ShoppingLayout = () => {
   const location = useLocation();
 
-  const isFilterVisible =
-    location.pathname === '/shopping/home' || location.pathname === '/shopping/listing';
+  // Filter only visible on listing page
+  const isFilterVisible = location.pathname === '/shopping/listing';
 
   return (
     <div style={styles.layout}>
+      {/* Fixed Header at the top */}
       <div style={styles.headerWrapper}>
         <ShoppingHeader />
-        <CartContainer />
       </div>
 
+      {/* Cart always visible */}
+      <CartContainer />
+
+      {/* Page Content */}
       <div style={styles.contentWrapper}>
         {isFilterVisible && (
           <aside style={styles.sidebar}>
@@ -39,17 +43,21 @@ const styles = {
     height: '100vh',
     display: 'flex',
     flexDirection: 'column',
-    overflow: 'hidden',
   },
   headerWrapper: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
     height: '60px',
-    position: 'relative',
-    zIndex: 10,
-    flexShrink: 0,
+    backgroundColor: '#fff',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    zIndex: 1000,
   },
   contentWrapper: {
     display: 'flex',
     flexGrow: 1,
+    marginTop: '60px', // Push content below the header
     height: 'calc(100vh - 60px)',
     overflow: 'hidden',
   },

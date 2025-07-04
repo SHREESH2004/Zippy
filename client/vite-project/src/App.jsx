@@ -69,7 +69,7 @@ function App() {
             </Checks>
           }
         >
-          <Route path="homes" element={<Shophome />} />
+          <Route path="home" element={<Shophome />} />
           <Route path="listing" element={<Listing />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="account" element={<Account />} />
