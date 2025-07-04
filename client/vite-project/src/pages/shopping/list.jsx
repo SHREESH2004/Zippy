@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllProducts } from '../../store/shop'; // Update the path as needed
-import { ArrowDownUp, CircleDollarSign,Store } from 'lucide-react';
+import { ArrowDownUp, CircleDollarSign, Store } from 'lucide-react';
 import ProductCard from './Producttile';
 import Filter from './filter';
 import ProductDetailModal from './ProductDetailsMOdal';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function Listing() {
     const dispatch = useDispatch();
     const { products, isLoading, error } = useSelector(state => state.shoppingProducts);
@@ -22,6 +25,19 @@ function Listing() {
     useEffect(() => {
         dispatch(fetchAllProducts(filters));
     }, [dispatch, filters]);
+    useEffect(() => {
+        if (error) {
+            toast.error(`Error: ${error}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+        }
+    }, [error]);
 
     // Receive filters from Filter component
     const handleApplyFilters = (selectedFilters) => {
@@ -145,13 +161,14 @@ function Listing() {
                                     hoveredId={hoveredId}
                                     setHoveredId={setHoveredId}
                                     quantity={quantities[product._id] || 0}
-                                    onAddToCart={handleAddToCart}
-                                    onRemoveFromCart={handleRemoveFromCart}
                                     styles={styles}
                                     onSelect={setSelectedProduct}
+                                    onAddToCart={handleAddToCart}
+                                    onRemoveFromCart={handleRemoveFromCart}
                                 />
                             ))
                         )}
+
                     </div>
                 </div>
             </div>

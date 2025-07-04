@@ -23,7 +23,20 @@ const Login = () => {
     e.preventDefault();
     try {
       const result = await dispatch(login(formData)).unwrap();
-      if (result?.user?.role === 'admin') {
+
+      // ✅ Store token and user ID in localStorage
+      if (result.token) {
+        localStorage.setItem('token', result.token);
+      }
+
+      if (result.user?._id) {
+        localStorage.setItem('userId', result.user._id);
+        localStorage.setItem('email', result.user.email);
+        localStorage.setItem('username', result.user.username);
+      }
+
+      // ✅ Redirect based on role
+      if (result.user?.role === 'admin') {
         navigate('/admin/dashboard');
       } else {
         navigate('/shopping/home');
@@ -32,6 +45,7 @@ const Login = () => {
       console.error('Login failed:', error);
     }
   };
+
 
   return (
     <div style={pageStyles}>

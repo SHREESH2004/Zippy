@@ -2,7 +2,7 @@ import React from 'react';
 import ShoppingHeader from './header';
 import Filter from '../../src/pages/shopping/filter';
 import Listing from '../../src/pages/shopping/list';
-
+import CartPopup from '../../src/pages/shopping/cardpopup';
 const ShoppingLayout = () => {
   return (
     <div style={styles.layout}>
