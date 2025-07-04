@@ -2,11 +2,16 @@ import React from 'react';
 import ShoppingHeader from './header';
 import Filter from '../../src/pages/shopping/filter';
 import Listing from '../../src/pages/shopping/list';
-import CartPopup from '../../src/pages/shopping/cardpopup';
+import CartContainer from '../../src/pages/shopping/CartContainer'; // this will handle CartPopup inside
+
 const ShoppingLayout = () => {
   return (
     <div style={styles.layout}>
       <ShoppingHeader />
+
+      {/* Floating Cart Button + Cart Popup */}
+      <CartContainer />
+
       <div style={styles.contentWrapper}>
         <aside style={styles.sidebar}>
           <Filter />
@@ -28,6 +33,7 @@ const styles = {
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
+    position: 'relative', // allows Cart to sit on top if needed
   },
   contentWrapper: {
     display: 'flex',

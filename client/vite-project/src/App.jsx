@@ -1,45 +1,54 @@
 import React, { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom'; 
+import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Home from './pages/shopping/home';
-import Login from './pages/auth/login';
-import Register from './pages/auth/register';
+
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { checkAuth } from './store/auth-slice';
+
+// Common Auth Checker
+import Checks from "../components/common/checkaith";
+
+// Admin Pages
 import AdminLayout from '../components/admin/layout';
 import AdminDashboard from './pages/admin/dashboard';
 import AdminOrders from './pages/admin/orders';
+import ProductPage from './pages/admin/Productpage';
+
+// Shopping Pages
 import ShoppingLayout from '../components/shopping/layout';
-import PageNotFound from './pages/notfound/no';
-import Homepage from './pages/auth/Home';
+import Home from './pages/shopping/home';
 import Listing from './pages/shopping/list';
 import Checkout from './pages/shopping/checkout';
 import Account from './pages/shopping/account';
-import { useDispatch, useSelector } from 'react-redux';
-import Checks from "../components/common/checkaith";
-import { checkAuth } from './store/auth-slice';
-import ProductPage from './pages/admin/Productpage';
+
+// Auth Pages
+import Login from './pages/auth/login';
+import Register from './pages/auth/register';
+import Homepage from './pages/auth/Home';
+
+// Fallback Page
+import PageNotFound from './pages/notfound/no';
+
 function App() {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-  const dispatch=useDispatch();
-  useEffect(()=>{
+  const dispatch = useDispatch();
 
-    dispatch(checkAuth())
-  },[dispatch])
-
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
 
   return (
     <>
-      {/* ✅ Toast container inside the component JSX */}
-      <ToastContainer position="top-right" autoClose={3000} />
-
+      {/* Routes */}
       <Routes>
-        {/* Public Routes */}
-
+        {/* Public */}
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Admin Routes */}
+        {/* Admin */}
         <Route
           path="/admin"
           element={
@@ -53,7 +62,7 @@ function App() {
           <Route path="products" element={<ProductPage />} />
         </Route>
 
-        {/* Shopping Routes */}
+        {/* Shopping */}
         <Route
           path="/shopping"
           element={
@@ -63,7 +72,7 @@ function App() {
           }
         >
           <Route path="home" element={<Home />} />
-          <Route path="listing" element={<Listing/>} />
+          <Route path="listing" element={<Listing />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="account" element={<Account />} />
         </Route>
@@ -71,6 +80,9 @@ function App() {
         {/* 404 Fallback */}
         <Route path="*" element={<PageNotFound />} />
       </Routes>
+
+      {/* Toast notifications */}
+      <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 }

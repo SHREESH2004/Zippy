@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
 import { shoppingviewMenuItems } from '../../src/config';
+import CartContainer from '../../src/pages/shopping/CartContainer';
 
 const ShoppingHeader = () => {
   const navigate = useNavigate();
@@ -60,7 +61,6 @@ const ShoppingHeader = () => {
             </button>
           )}
         </div>
-
         <nav style={centerSection} className="menu-desktop">
           {shoppingviewMenuItems.map((item) => (
             <Link
@@ -76,35 +76,40 @@ const ShoppingHeader = () => {
               {item.label}
             </Link>
           ))}
+
+          {/* ✅ Cart button placed beside menu items */}
         </nav>
 
-        <div style={rightSection}>
-          <Link to="/shopping/profile" className="icon-link" title="Profile">
-            <CircleUserRound />
-          </Link>
-          <Link to="/shopping/cart" className="icon-link" title="Cart">
-            <ShoppingCart />
-          </Link>
 
-          {username && (
-            <div style={{ position: 'relative' }}>
-              <div className="user-circle" onClick={toggleDropdown}>
-                {getInitials(username)}
-              </div>
+<div style={rightSection}>
+  <Link to="/shopping/profile" className="icon-link" title="Profile">
+    <CircleUserRound />
+  </Link>
 
-              {showDropdown && (
-                <div className="dropdown">
-                  <button onClick={() => navigate('/shopping/profile')}>
-                    <User size={16} style={{ marginRight: 6 }} /> My Account
-                  </button>
-                  <button onClick={handleLogout}>
-                    <LogOut size={16} style={{ marginRight: 6 }} /> Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+  {/* ✅ Add Cart Container beside Profile */}
+  <div style={{ marginLeft: '8px' }}>
+    <CartContainer />
+  </div>
+
+  {username && (
+    <div style={{ position: 'relative' }}>
+      <div className="user-circle" onClick={toggleDropdown}>
+        {getInitials(username)}
+      </div>
+      {showDropdown && (
+        <div className="dropdown">
+          <button onClick={() => navigate('/shopping/profile')}>
+            <User size={16} style={{ marginRight: 6 }} /> My Account
+          </button>
+          <button onClick={handleLogout}>
+            <LogOut size={16} style={{ marginRight: 6 }} /> Sign Out
+          </button>
         </div>
+      )}
+    </div>
+  )}
+</div>
+
       </header>
 
       <div className={`sidebar ${showSidebar ? 'open' : ''}`}>
