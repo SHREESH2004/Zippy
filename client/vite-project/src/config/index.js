@@ -112,26 +112,26 @@ export const shoppingviewMenuItems = [
   {
     id: 'men',
     label: 'Men',
-    path: '/shop/listing?category=men'
+    path: '/shopping/listing'
   },
   {
     id: 'women',
     label: 'Women',
-    path: '/shop/listing?category=women'
+    path: '/shopping/listing'
   },
   {
     id: 'kids',
     label: 'Kids',
-    path: '/shop/listing?category=kids'
+    path: '/shopping/listing'
   },
   {
     id: 'accessories',
     label: 'Accessories',
-    path: '/shop/listing?category=accessories'
+    path: '/shopping/listing'
   },
   {
     id: 'footwear',
     label: 'Footwear',
-    path: '/shop/listing?category=footwear'
+    path: '/shopping/listing'
   }
 ];

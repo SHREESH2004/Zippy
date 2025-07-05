@@ -12,7 +12,7 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/admin/products/fetchall');
+        const response = await fetch('http://localhost:3000/admin/products/products/all');
         const data = await response.json();
         if (data.success) {
           dispatch({ type: 'adminProducts/setInitialProducts', payload: data.data });

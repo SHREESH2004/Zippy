@@ -86,9 +86,9 @@ const styles = {
   },
 
   filterButton: {
-  padding: '10px 18px',
-    backgroundColor: '#28a745',
-    color: '#ffffff',
+    padding: '10px 18px',
+    backgroundColor: '#111111', // 🖤 black background
+    color: '#ffffff',           // white text
     border: 'none',
     borderRadius: '8px',
     fontWeight: '600',
@@ -96,8 +96,9 @@ const styles = {
     cursor: 'pointer',
     fontFamily: "'Poppins', sans-serif",
     transition: 'background-color 0.3s ease',
-    boxShadow: '0 4px 10px rgba(40, 167, 69, 0.25)',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25)', // subtle shadow for depth
   },
+
 
   sidebar: {
     width: '230px',
@@ -148,12 +149,12 @@ const styles = {
     borderRadius: '6px',
   },
 
-result: {
-  marginTop: '8px', // reduced from 32px
-  fontSize: '15px',
-  color: '#000',
-  lineHeight: '1.6',
-},
+  result: {
+    marginTop: '8px', // reduced from 32px
+    fontSize: '15px',
+    color: '#000',
+    lineHeight: '1.6',
+  },
 
 
   resultTitle: {

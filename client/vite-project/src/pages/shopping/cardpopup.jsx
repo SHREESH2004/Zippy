@@ -4,14 +4,21 @@ import { toast } from 'react-toastify'; // ✅ Only toast, no container here
 
 const CartPopup = ({ cartItems, totalPrice, onAdd, onRemove, onBuyNow, onClose }) => {
   const handleCheckout = () => {
-    toast.success('🛍️ Checkout successful!', {
-      position: 'bottom-right',
+    toast.success('Checked Out!', {
+      position: 'top-right',
       autoClose: 3000,
       hideProgressBar: false,
       pauseOnHover: true,
       draggable: true,
-      theme: 'colored',
+      theme: 'light',
+      style: {
+        background: '#fff',
+        color: '#333',
+        border: '1px solid #ddd',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+      }
     });
+
     onBuyNow();
   };
 
