@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,6 +20,25 @@ const brandLogos = [
 const Shophome = () => {
   const scrollRef = useRef(null);
   const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/admin/products/products/all');
+        const data = await response.json();
+        if (data.success) {
+          setProducts(data.data);
+        } else {
+          throw new Error('Failed to fetch products');
+        }
+      } catch (err) {
+        console.error('Fetching error:', err.message);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const scroll = (direction) => {
     const scrollAmount = window.innerWidth * 0.9;
@@ -37,20 +56,34 @@ const Shophome = () => {
   }, []);
 
   return (
-    <div style={styles.container}>
-      <div style={styles.carouselWrapper}>
-        <button style={styles.arrowLeft} onClick={() => scroll('left')}>
-          <ChevronLeft size={36} color="#111" />
-        </button>
-
-        <div style={styles.carousel} ref={scrollRef}>
+    <div style={{ fontFamily: 'Poppins, sans-serif' }}>
+      <div style={{ height: '92vh', overflow: 'hidden', position: 'relative' }}>
+        <div ref={scrollRef} style={{ display: 'flex', width: '100%', height: '100%', overflowX: 'auto', scrollSnapType: 'x mandatory' }}>
           {bannerImages.map((img, idx) => (
-            <div key={idx} style={styles.slide}>
-              <img src={img} alt={`Banner ${idx + 1}`} style={styles.bannerImage} />
-              <div style={styles.overlay}>
-                <h1 style={styles.heading}>Unleash Your Style</h1>
-                <p style={styles.subheading}>Shop the latest trends in fashion and feel fabulous every day.</p>
-                <button style={styles.shopBtn} onClick={() => navigate('/shopping/listing')}>
+            <div key={idx} style={{ minWidth: '100%', height: '100%', position: 'relative', scrollSnapAlign: 'start' }}>
+              <img src={img} alt={`banner-${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(70%)' }} />
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', padding: '60px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', color: '#fff' }}>
+                <h1 style={{ fontSize: '4rem', fontWeight: 'bold', marginBottom: '20px', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>Unleash Your Style</h1>
+                <p style={{ fontSize: '1.4rem', marginBottom: '30px', maxWidth: '600px', lineHeight: '1.6', color: '#f0f0f0' }}>
+                  Shop the latest trends in fashion and feel fabulous every day.
+                </p>
+                <button
+                  onClick={() => navigate('/shopping/listing')}
+                  style={{
+                    background: '#000',
+                    color: '#fff',
+                    border: '2px solid #fff',
+                    borderRadius: '50px',
+                    padding: '16px 40px',
+                    fontSize: '1.2rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 8px 24px rgba(255,255,255,0.2)',
+                  }}
+                  onMouseEnter={(e) => (e.target.style.transform = 'scale(1.06)')}
+                  onMouseLeave={(e) => (e.target.style.transform = 'scale(1)')}
+                >
                   Shop Now
                 </button>
               </div>
@@ -58,189 +91,142 @@ const Shophome = () => {
           ))}
         </div>
 
-        <button style={styles.arrowRight} onClick={() => scroll('right')}>
+        <button
+          onClick={() => scroll('left')}
+          style={{ position: 'absolute', top: '50%', left: '20px', transform: 'translateY(-50%)', background: '#ffffffd0', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer', boxShadow: '0 2px 10px rgba(0,0,0,0.2)', zIndex: 10 }}
+        >
+          <ChevronLeft size={36} color="#111" />
+        </button>
+        <button
+          onClick={() => scroll('right')}
+          style={{ position: 'absolute', top: '50%', right: '20px', transform: 'translateY(-50%)', background: '#ffffffd0', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer', boxShadow: '0 2px 10px rgba(0,0,0,0.2)', zIndex: 10 }}
+        >
           <ChevronRight size={36} color="#111" />
         </button>
       </div>
 
-      <div style={styles.logoSection}>
-        <h2 style={styles.brandsHeading}>Explore Our Top Brands</h2>
-        <div style={styles.logoGrid}>
-          {brandLogos.map((logo, idx) => (
-            <img key={idx} src={logo.src} alt={logo.alt} style={styles.logoImage} />
+      <div style={{ textAlign: 'center', padding: '60px 20px', background: '#fff' }}>
+        <br />
+        <br />
+        <br />
+        <br />
+        <h2 style={{ fontSize: '2.6rem', marginBottom: '40px', fontWeight: 700 }}>Explore Our Top Brands</h2>
+        <br />
+        <br />
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '40px' }}>
+          {brandLogos.map((logo, i) => (
+            <img key={i} src={logo.src} alt={logo.alt} style={{ height: '80px', objectFit: 'contain' }} />
           ))}
         </div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
 
-        <div style={styles.textContent}>
-          <h3 style={styles.subTitle}>Why Shop With Us?</h3>
-          <p style={styles.description}>At Zippy, we bring you the hottest collections from globally loved brands. Whether you're looking for everyday essentials, bold new styles, or seasonal steals, we've got you covered with unmatched quality and unbeatable deals.</p>
+        <div style={{ marginTop: '50px', maxWidth: '900px', marginLeft: 'auto', marginRight: 'auto' }}>
+          <h3 style={{ fontSize: '2.2rem', color: '#111', fontWeight: '700', marginBottom: '20px' }}>
+            Why Zippy Stores?
+          </h3>
+          <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: '1.8' }}>
+            Zippy Stores isn't just about fashion — it's a lifestyle. We curate premium styles from the world's
+            top brands, fuse them with unbeatable deals, and deliver an elevated shopping experience straight to
+            your screen. From everyday essentials to bold seasonal drops, we’ve got your fashion cravings covered.
+            Shop smart. Shop stylish. Shop Zippy.
+          </p>
+          <br />
+          <br />
           <button style={styles.shopBtn} onClick={() => navigate('/shopping/listing')}>
             Discover More
           </button>
         </div>
       </div>
-      <footer style={styles.footer}>
-        <p style={styles.footerText}>© 2025 Zippy. All rights reserved.</p>
-        <p style={styles.footerText}>Follow us on Instagram, Twitter & Facebook for exclusive offers.</p>
-        <p style={styles.footerText}>Crafted with ❤️ by Shreesh Sanyal</p>
+
+      <div style={{ padding: '80px 40px', backgroundColor: '#f7f7f7' }}>
+        <h2 style={{ fontSize: '2.4rem', textAlign: 'center', marginBottom: '60px', fontWeight: '700', color: '#111' }}>
+          Featured Products
+        </h2>
+        <br />
+        <br />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '40px' }}>
+          {products.map((product) => (
+            <div
+              key={product._id}
+              style={{
+                borderRadius: '16px',
+                overflow: 'hidden',
+                background: '#fff',
+                boxShadow: '0 12px 24px rgba(0,0,0,0.1)',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'transform 0.3s ease',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-6px)')}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
+              <img
+                src={product.image}
+                alt={product.title}
+                style={{ width: '100%', height: '240px', objectFit: 'cover' }}
+              />
+              <div style={{ padding: '20px' }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#111', marginBottom: '8px' }}>{product.title}</h3>
+                <p style={{ color: '#555', fontSize: '0.95rem', marginBottom: '10px' }}>{product.description?.slice(0, 80)}...</p>
+                <p style={{ fontSize: '0.9rem', color: '#777', marginBottom: '6px' }}>
+                  <strong>Brand:</strong> {product.brand} | <strong>Category:</strong> {product.category}
+                </p>
+                <p style={{ fontSize: '0.9rem', color: '#777', marginBottom: '12px' }}>
+                  <strong>Stock:</strong> {product.totalStock} pcs
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '1rem', fontWeight: 600, color: '#222' }}>
+                    ₹{product.price} {product.salePrice && <span style={{ textDecoration: 'line-through', marginLeft: '8px', color: '#aaa' }}>₹{product.salePrice}</span>}
+                  </span>
+                  <button
+                    style={{
+                      padding: '8px 18px',
+                      background: '#111',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                    }}
+                    onClick={() => navigate('/shopping/listing')}
+                  >
+                    View
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <footer style={{ backgroundColor: '#fff', color: '#111', textAlign: 'center', padding: '60px 30px', fontSize: '1.1rem', fontWeight: '500', letterSpacing: '0.4px', lineHeight: '1.8' }}>
+        <p style={{ margin: '10px 0' }}>© 2025 Zippy. All rights reserved.</p>
+        <p style={{ margin: '10px 0' }}>Follow us on Instagram, Twitter & Facebook for exclusive offers.</p>
+        <p style={{ margin: '10px 0' }}>Crafted with ❤️ by Shreesh Sanyal</p>
       </footer>
     </div>
   );
 };
-
 const styles = {
-  container: {
-    width: '100%',
-    overflow: 'hidden',
-    fontFamily: 'Poppins, sans-serif',
-    backgroundColor: '#000',
-  },
-  carouselWrapper: {
-    position: 'relative',
-    height: '92vh',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  carousel: {
-    display: 'flex',
-    overflowX: 'auto',
-    scrollBehavior: 'smooth',
-    height: '100%',
-    width: '100%',
-    scrollSnapType: 'x mandatory',
-  },
-  slide: {
-    position: 'relative',
-    flexShrink: 0,
-    width: '100vw',
-    height: '100%',
-    scrollSnapAlign: 'start',
-  },
-  bannerImage: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    filter: 'brightness(80%)',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    background: 'linear-gradient(to bottom right, rgba(0,0,0,0.6), rgba(0,0,0,0.3))',
-    zIndex: 2,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    padding: '80px',
-    color: '#fff',
-  },
-  heading: {
-    fontSize: '4rem',
-    fontWeight: 'bold',
-    marginBottom: '16px',
-    textShadow: '0 6px 24px rgba(0,0,0,0.5)',
-  },
-  subheading: {
-    fontSize: '1.4rem',
-    marginBottom: '30px',
-    maxWidth: '600px',
-    lineHeight: '1.6',
-    color: '#f0f0f0',
-  },
   shopBtn: {
-    background: '#000',
+    background: '#111',
     color: '#fff',
-    border: '2px solid #fff',
+    border: 'none',
     borderRadius: '50px',
     padding: '16px 40px',
     fontSize: '1.2rem',
     fontWeight: '600',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
-    boxShadow: '0 8px 24px rgba(255,255,255,0.2)',
-  },
-  arrowLeft: {
-    position: 'absolute',
-    top: '50%',
-    left: '20px',
-    transform: 'translateY(-50%)',
-    background: '#ffffffd0',
-    border: 'none',
-    borderRadius: '50%',
-    zIndex: 5,
-    cursor: 'pointer',
-    padding: '10px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-  },
-  arrowRight: {
-    position: 'absolute',
-    top: '50%',
-    right: '20px',
-    transform: 'translateY(-50%)',
-    background: '#ffffffd0',
-    border: 'none',
-    borderRadius: '50%',
-    zIndex: 5,
-    cursor: 'pointer',
-    padding: '10px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-  },
-  logoSection: {
-    padding: '80px 20px',
-    backgroundColor: '#fff',
-    textAlign: 'center',
-  },
-  brandsHeading: {
-    fontSize: '2.6rem',
-    fontWeight: '700',
-    marginBottom: '60px',
-    color: '#111',
-  },
-  logoGrid: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: '50px',
-    alignItems: 'center',
-  },
-  logoImage: {
-    height: '90px',
-    maxWidth: '160px',
-    objectFit: 'contain',
-    filter: 'grayscale(0%)',
-  },
-  textContent: {
-    marginTop: '60px',
-    maxWidth: '900px',
-    margin: '60px auto 0',
-  },
-  subTitle: {
-    fontSize: '2rem',
-    fontWeight: '600',
-    marginBottom: '20px',
-    color: '#111',
-  },
-  description: {
-    fontSize: '1.1rem',
-    lineHeight: '1.8',
-    color: '#444',
-    marginBottom: '30px',
-  },
-  footer: {
-    backgroundColor: '#fff',
-    color: '#111',
-    textAlign: 'center',
-    padding: '60px 30px',
-    fontSize: '1.1rem',
-    fontWeight: '500',
-    letterSpacing: '0.4px',
-    lineHeight: '1.8',
-  },
-  footerText: {
-    margin: '10px 0',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
   },
 };
 
