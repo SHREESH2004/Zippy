@@ -3,7 +3,7 @@ import {
   MapPin, ShoppingCart, Pencil, Trash2, BadgeIndianRupee, PlusCircle
 } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
-
+import OrderHistory from './orderhistoyr';
 const AccountUI = ({ loading, addresses, cart, onAddAddress, onEditAddress, onDeleteAddress }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
@@ -13,7 +13,19 @@ const AccountUI = ({ loading, addresses, cart, onAddAddress, onEditAddress, onDe
 
   const handleFormChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  const isValidForm = () => {
+    const requiredFields = ['address', 'city', 'state', 'pincode', 'phoneno'];
+    for (let field of requiredFields) {
+      if (!formData[field].trim()) {
+        toast.error(`Please fill out the ${field} field.`);
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleSubmit = () => {
+    if (!isValidForm()) return;
     if (isEditing) {
       onEditAddress(isEditing, formData);
       toast.success('Address updated successfully!');
@@ -164,6 +176,14 @@ const AccountUI = ({ loading, addresses, cart, onAddAddress, onEditAddress, onDe
                   🛍️ Buy Now
                 </button>
               </div>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+
+              <OrderHistory />
             </>
           )}
         </section>
