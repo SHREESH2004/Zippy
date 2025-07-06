@@ -56,7 +56,7 @@ const ShoppingHeader = () => {
           </button>
 
           {username && (
-            <button className="hi-user-btn" onClick={() => navigate('/shopping/profile')}>
+            <button className="hi-user-btn" onClick={() => navigate('/shopping/account')}>
               Hi, <strong>{getFirstName(username)}</strong>
             </button>
           )}
@@ -82,7 +82,7 @@ const ShoppingHeader = () => {
 
 
         <div style={rightSection}>
-          <Link to="/shopping/profile" className="icon-link" title="Profile">
+          <Link to="/shopping/account" className="icon-link" title="Profile">
             <CircleUserRound />
           </Link>
 

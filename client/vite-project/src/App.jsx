@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { checkAuth } from './store/auth-slice';
-
+import Account from './pages/shopping/Account';
 // Auth Guard
 import Checks from "../components/common/checkaith";
 
@@ -20,7 +20,6 @@ import ShoppingLayout from '../components/shopping/layout';
 import Shophome from './pages/shopping/Shophome';
 import Listing from './pages/shopping/list';
 import Checkout from './pages/shopping/checkout';
-import Account from './pages/shopping/account';
 
 // Auth Pages
 import Login from './pages/auth/login';
@@ -72,7 +71,7 @@ function App() {
           <Route path="home" element={<Shophome />} />
           <Route path="listing" element={<Listing />} />
           <Route path="checkout" element={<Checkout />} />
-          <Route path="account" element={<Account />} />
+          <Route path="account" element={<Account/>} />
         </Route>
 
         {/* Fallback Route */}
