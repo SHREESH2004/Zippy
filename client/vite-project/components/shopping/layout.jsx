@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import ShoppingHeader from './header';
 import Filter from '../../src/pages/shopping/filter';
 import CartContainer from '../../src/pages/shopping/CartContainer';
+import ZippyChatPopup from '../../src/pages/shopping/ZippyAI';
 
 const ShoppingLayout = () => {
   const location = useLocation();
@@ -12,7 +13,7 @@ const ShoppingLayout = () => {
 
   return (
     <div style={styles.layout}>
-      {/* Fixed Header at the top */}
+      {/* Fixed Header */}
       <div style={styles.headerWrapper}>
         <ShoppingHeader />
       </div>
@@ -27,11 +28,13 @@ const ShoppingLayout = () => {
             <Filter />
           </aside>
         )}
-
         <main style={styles.main}>
           <Outlet />
         </main>
       </div>
+
+      {/* 👇 Floating Zippy AI Chat Popup always available */}
+      <ZippyChatPopup />
     </div>
   );
 };
@@ -43,6 +46,7 @@ const styles = {
     height: '100vh',
     display: 'flex',
     flexDirection: 'column',
+    position: 'relative',
   },
   headerWrapper: {
     position: 'fixed',

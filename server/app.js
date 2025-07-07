@@ -7,6 +7,7 @@ import adminProductRouter from './routes/admin/product.routes.js'
 import cartRoutes from './routes/cart.routes.js';
 import addressRoutes from './routes/address.routes.js';
 import ordersRoutes from './routes/orders.routes.js';
+import aiRoutes from './routes/ai.routes.js';
 configDotenv();
 const app=express();
 app.use(cors({
@@ -24,4 +25,5 @@ app.use('/admin/products',adminProductRouter);
 app.use('/cart', cartRoutes);
 app.use('/address', addressRoutes);
 app.use('/orders', ordersRoutes);
+app.use('/ai', aiRoutes);
 export default app;

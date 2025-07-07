@@ -13,7 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
 import { shoppingviewMenuItems } from '../../src/config';
 import CartContainer from '../../src/pages/shopping/CartContainer';
-
+import { BotMessageSquare } from 'lucide-react';
 const ShoppingHeader = () => {
   const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
@@ -82,6 +82,10 @@ const ShoppingHeader = () => {
 
 
         <div style={rightSection}>
+          <Link to="/zippyai" className="icon-link" title="Zippy AI">
+            <BotMessageSquare />
+          </Link>
+
           <Link to="/shopping/account" className="icon-link" title="Profile">
             <CircleUserRound />
           </Link>

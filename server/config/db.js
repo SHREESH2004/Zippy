@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-const uri = 'mongodb+srv://shreeshsanyal:QBqeJ7Ukd99Qg9IX@zippy.hlp2cgw.mongodb.net/';
-
+import dotenv from 'dotenv';
+dotenv.config();
+const uri = process.env.MONGO_URI ;
 async function connectToMongoDB() {
     try {
         await mongoose.connect(uri, {

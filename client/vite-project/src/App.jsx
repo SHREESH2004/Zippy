@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import ZippyChat from './pages/shopping/ZippyAI';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkAuth } from './store/auth-slice';
 import Account from './pages/shopping/Account';
@@ -44,7 +44,7 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
+        <Route path="/zippyai" element={<ZippyChat />} />
         {/* Admin Routes */}
         <Route
           path="/admin"
@@ -71,7 +71,7 @@ function App() {
           <Route path="home" element={<Shophome />} />
           <Route path="listing" element={<Listing />} />
           <Route path="checkout" element={<Checkout />} />
-          <Route path="account" element={<Account/>} />
+          <Route path="account" element={<Account />} />
         </Route>
 
         {/* Fallback Route */}
