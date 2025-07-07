@@ -82,9 +82,6 @@ const ShoppingHeader = () => {
 
 
         <div style={rightSection}>
-          <Link to="/zippyai" className="icon-link" title="Zippy AI">
-            <BotMessageSquare />
-          </Link>
 
           <Link to="/shopping/account" className="icon-link" title="Profile">
             <CircleUserRound />
