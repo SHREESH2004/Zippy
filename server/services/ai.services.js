@@ -16,19 +16,13 @@ const model = genAI.getGenerativeModel({
   temperature: 0.4,
   systemInstruction: `
 You are Zippy, the AI shopping assistant for Zippy Stores. Help users find products from the catalog. Never hallucinate. Always filter based on:
-- category: Men, Women, Unisex
-- brand
-- keywords
-- price (if provided)
-
-If nothing is found, politely say so.
-
-Respond ONLY in a JSON structure:
+- description (if given explicitly)
+- category, brand, price (optional)
+Respond ONLY in:
 {
   "message": "string",
   "products": [
     {
-      "_id": "string",
       "title": "string",
       "description": "string",
       "price": number,
@@ -37,43 +31,67 @@ Respond ONLY in a JSON structure:
     }
   ]
 }
-
-Return at most 5 products. Format clearly.
-If the query is generic or a greeting (e.g. "hello", "what is Zippy?"), just respond with a friendly message about Zippy and an empty products list.
+Return at most 5 products.
+If query is like "hello", respond only: "Hi, I'm Zippy AI."
 `,
 });
 
-// 🧠 Basic heuristics to detect generic questions or greetings
-const isGeneralQuery = (prompt) => {
-  const generalKeywords = [
-    'hello', 'hi', 'hey', 'help', 'how are you', 'how can you help',
-    'what is zippy', 'who are you', 'about you', 'about zippy', 'zippy?'
-  ];
-  const promptLower = prompt.toLowerCase();
-  return generalKeywords.some((keyword) => promptLower.includes(keyword));
+// Greeting detection
+const isGreetingQuery = (prompt) => {
+  const greetings = ['hello', 'hi', 'hey', 'zippy?', 'what is zippy', 'who are you'];
+  return greetings.some((g) => prompt.toLowerCase().includes(g));
+};
+
+// Check for explicit description filter
+const isDescriptionPrompt = (prompt) => {
+  return prompt.toLowerCase().startsWith('description:');
 };
 
 export const getZippyChatResponse = async (prompt) => {
   try {
-    // 🤖 Handle general questions without product filtering
-    if (isGeneralQuery(prompt)) {
+    if (isGreetingQuery(prompt)) {
       return {
-        message:
-          "👋 Hi! I'm Zippy, your smart shopping assistant. I help you find the perfect products across our Men, Women, and Unisex collections. You can ask me things like 'Show me casual shoes under ₹1500' or 'Nike T-shirts for Men'.",
+        message: "Hi, I'm Zippy AI.",
         products: [],
       };
     }
 
-    // 🛍 Fetch all available products
     const { data } = await axios.get('http://localhost:3000/admin/products/products/all');
     const allProducts = data?.data || [];
 
-    // 💸 Attempt to extract price filter
+    // Handle "description: football studs" prompt
+    if (isDescriptionPrompt(prompt)) {
+      const descValue = prompt.slice('description:'.length).trim().toLowerCase();
+      const filtered = allProducts.filter((product) =>
+        product.description.toLowerCase().includes(descValue)
+      );
+
+      if (filtered.length === 0) {
+        return {
+          message: "😕 Couldn't find any products with that in the description.",
+          products: [],
+        };
+      }
+
+      const top = filtered.slice(0, 5).map((p) => ({
+        title: p.title,
+        description: p.description,
+        price: p.price,
+        salePrice: p.salePrice,
+        image: p.image,
+      }));
+
+      return {
+        message: "🔍 Products found by description:",
+        products: top,
+      };
+    }
+
+    // Otherwise, use Gemini to extract filters
     const priceMatch = prompt.match(/(?:₹|\$)?\s*(\d+)\s*(?:₹|\$)?/);
     const extractedMaxPrice = priceMatch ? parseInt(priceMatch[1]) : undefined;
 
-    // 🧠 Use Gemini to classify filters from prompt
-    const classifyPrompt = `Extract filters from this query: "${prompt}". Respond only in valid JSON like:
+    const classifyPrompt = `Extract filters from this query: "${prompt}". Respond in JSON:
 {
   "category": "optional",
   "brand": "optional",
@@ -87,42 +105,30 @@ export const getZippyChatResponse = async (prompt) => {
     else if (rawText.startsWith('```')) rawText = rawText.replace(/^```/, '').replace(/```$/, '').trim();
 
     const filters = JSON.parse(rawText);
-
-    // ⛔ Normalize optional fields
-    if (filters.brand === 'optional' || filters.brand === null) filters.brand = undefined;
-    if (filters.category === 'optional' || filters.category === null) filters.category = undefined;
-    if (filters.maxPrice === 'optional' || filters.maxPrice === null) filters.maxPrice = undefined;
     if (!Array.isArray(filters.keywords)) filters.keywords = [];
+    if (filters.brand === 'optional' || !filters.brand) filters.brand = undefined;
+    if (filters.category === 'optional' || !filters.category) filters.category = undefined;
+    if (filters.maxPrice === 'optional' || !filters.maxPrice) filters.maxPrice = undefined;
 
-    // 🔍 Filter products
     const filteredProducts = allProducts.filter((product) => {
-      const matchCategory =
-        !filters.category || product.category.toLowerCase() === filters.category.toLowerCase();
-      const matchBrand =
-        !filters.brand || product.brand.toLowerCase().includes(filters.brand.toLowerCase());
+      const matchCategory = !filters.category || product.category.toLowerCase() === filters.category.toLowerCase();
+      const matchBrand = !filters.brand || product.brand.toLowerCase().includes(filters.brand.toLowerCase());
       const matchPrice = !filters.maxPrice || product.salePrice <= filters.maxPrice;
-      const matchKeywords =
-        filters.keywords.length === 0 ||
-        filters.keywords.some((keyword) =>
-          product.title.toLowerCase().includes(keyword.toLowerCase()) ||
-          product.description.toLowerCase().includes(keyword.toLowerCase())
-        );
-
+      const matchKeywords = filters.keywords.every((kw) =>
+        product.title.toLowerCase().includes(kw.toLowerCase()) ||
+        product.description.toLowerCase().includes(kw.toLowerCase())
+      );
       return matchCategory && matchBrand && matchPrice && matchKeywords;
     });
 
-    // 🚫 No matches found
     if (filteredProducts.length === 0) {
       return {
-        message:
-          "😕 Sorry, I couldn't find any products matching your request. Try changing your category, brand, or price range!",
+        message: "😕 No matching products found. Try different filters.",
         products: [],
       };
     }
 
-    // ✅ Return top 5 matches
     const topProducts = filteredProducts.slice(0, 5).map((prod) => ({
-      _id: prod._id,
       title: prod.title,
       description: prod.description,
       price: prod.price,
@@ -131,13 +137,13 @@ export const getZippyChatResponse = async (prompt) => {
     }));
 
     return {
-      message: "🎉 Here are some products you might like:",
+      message: "🎯 Products matching your query:",
       products: topProducts,
     };
-  } catch (error) {
-    console.error('Zippy AI Service Error:', error.message);
+  } catch (err) {
+    console.error("Zippy AI Error:", err.message);
     return {
-      message: '🚨 Oops! Something went wrong while searching for products.',
+      message: "🚨 Something went wrong. Try again later.",
       products: [],
     };
   }

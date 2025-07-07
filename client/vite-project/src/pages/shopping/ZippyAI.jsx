@@ -24,6 +24,7 @@ const ZippyChatPopup = ({ showFloating = true }) => {
         )
       );
     } catch (err) {
+      console.error('Error fetching AI response:', err);
       setChatHistory((prev) =>
         prev.map((item, i) =>
           i === prev.length - 1
@@ -55,15 +56,16 @@ const ZippyChatPopup = ({ showFloating = true }) => {
 
             {chatHistory.length === 0 && (
               <div style={styles.guidelinesBox}>
-                <h4 style={styles.guidelinesTitle}>✨ Tips to Ask Zippy</h4>
+                <h4 style={styles.guidelinesTitle}>✨ How to Ask Zippy</h4>
                 <ul style={styles.guidelinesList}>
-                  <li><strong>🧥 Category:</strong> "Show men's jackets"</li>
-                  <li><strong>🏷 Brand:</strong> "Nike sneakers"</li>
-                  <li><strong>💰 Price:</strong> "Under $1000"</li>
-                  <li><strong>🔍 Keywords:</strong> "casual", "office wear", etc.</li>
+                  <li><strong>📝 </strong> <code>description: fifa 2006</code></li>
+                  <li><strong>🏷️ </strong> <code>brand: Nike</code></li>
+                  <li><strong>👕 </strong> <code>category: Men</code></li>
+                  <li><strong>💰 </strong> <code>price: under $1500</code></li>
                 </ul>
               </div>
             )}
+
 
             <div style={styles.chatBox}>
               {chatHistory.map((entry, idx) => (
