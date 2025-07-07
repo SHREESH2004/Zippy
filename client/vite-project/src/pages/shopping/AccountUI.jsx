@@ -4,12 +4,15 @@ import {
 } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
 import OrderHistory from './orderhistoyr';
+import BuyNowModal from './Buynowmodal';
 const AccountUI = ({ loading, addresses, cart, onAddAddress, onEditAddress, onDeleteAddress }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
   const [formData, setFormData] = useState({
     address: '', city: '', state: '', pincode: '', phoneno: '', notes: ''
   });
+  const [showBuyNow, setShowBuyNow] = useState(false);
+
 
   const handleFormChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -159,22 +162,44 @@ const AccountUI = ({ loading, addresses, cart, onAddAddress, onEditAddress, onDe
                 <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <BadgeIndianRupee color="#111827" /> Total: ${total}
                 </div>
+
                 <button
-                  style={{ marginTop: '1rem', padding: '0.75rem 2rem', fontSize: '1rem', fontWeight: '600', borderRadius: '9999px', backgroundColor: 'black', color: 'white', border: '2px solid transparent', cursor: 'pointer', transition: 'all 0.3s ease' }}
-                  onMouseEnter={e => {
+                  style={{
+                    marginTop: '1rem',
+                    padding: '0.75rem 2rem',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    borderRadius: '9999px',
+                    backgroundColor: 'black',
+                    color: 'white',
+                    border: '2px solid transparent',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
                     e.target.style.backgroundColor = 'white';
                     e.target.style.color = 'black';
                     e.target.style.border = '2px solid black';
                   }}
-                  onMouseLeave={e => {
+                  onMouseLeave={(e) => {
                     e.target.style.backgroundColor = 'black';
                     e.target.style.color = 'white';
                     e.target.style.border = '2px solid transparent';
                   }}
-                  onClick={() => toast.success('Proceeding to Checkout!')}
+                  onClick={() => setShowBuyNow(true)} // opens modal
                 >
                   🛍️ Buy Now
                 </button>
+
+                <BuyNowModal
+                  isOpen={showBuyNow}
+                  onClose={() => setShowBuyNow(false)}
+                  addresses={addresses}
+                  cartId={cart?._id}
+                  userId={localStorage.getItem('userId')}
+                  total={total}
+                />
+
               </div>
               <br></br>
               <br></br>

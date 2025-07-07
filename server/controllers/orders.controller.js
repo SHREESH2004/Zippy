@@ -64,14 +64,20 @@ export const getAllOrders = async (req, res) => {
 
 export const getMyOrders = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.query;
 
     if (!userId) return res.status(400).json({ message: "userId is required" });
 
     const orders = await Order.find({ user: userId })
-      .populate("cart")
-      .populate("address")
-      .populate("shippingAddress")
+      .populate({
+        path: 'cart',
+        populate: {
+          path: 'products.product', // <-- This will fetch actual product data
+          model: 'Product'
+        }
+      })
+      .populate('address')
+      .populate('shippingAddress')
       .sort({ createdAt: -1 });
 
     res.status(200).json(orders);

@@ -1,16 +1,106 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Package } from 'lucide-react';
+import axios from 'axios';
 
-const OrderHistory = ({ orders = [] }) => {
-  const dummyOrders = [
-    { id: 'ORD1001', date: '2025-06-28', status: 'Delivered', amount: 1899, items: 2 },
-    { id: 'ORD1002', date: '2025-06-22', status: 'Shipped', amount: 2799, items: 3 },
-    { id: 'ORD1003', date: '2025-06-15', status: 'Out for Delivery', amount: 999, items: 1 },
-    { id: 'ORD1004', date: '2025-06-10', status: 'Cancelled', amount: 0, items: 2 },
-    { id: 'ORD1005', date: '2025-06-02', status: 'Delivered', amount: 3499, items: 4 },
-  ];
+const OrderHistory = () => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const displayOrders = orders.length ? orders : dummyOrders;
+  const fetchOrders = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+
+      const response = await axios.get(`http://localhost:3000/orders/my?userId=${userId}`);
+      const transformed = response.data
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .map(order => ({
+          id: order._id.slice(-6).toUpperCase(),
+          date: new Date(order.createdAt).toLocaleDateString(),
+          status: order.status,
+          amount: order.totalAmount,
+          items: order.cart.products.length,
+          fullData: order,
+        }));
+
+      setOrders(transformed);
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const renderDetailsModal = () => {
+    if (!selectedOrder) return null;
+
+    const { fullData } = selectedOrder;
+
+    return (
+      <div style={{
+        position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+        backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex',
+        justifyContent: 'center', alignItems: 'center', zIndex: 1000
+      }}>
+        <div style={{
+          backgroundColor: 'white', padding: '2rem', borderRadius: '1rem',
+          width: '90%', maxWidth: '700px', maxHeight: '90%', overflowY: 'auto'
+        }}>
+          <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#4f46e5' }}>
+            Order #{selectedOrder.id} - Full Details
+          </h3>
+          <p><strong>Placed On:</strong> {selectedOrder.date}</p>
+          <p><strong>Status:</strong> {selectedOrder.status}</p>
+          <p><strong>Total Amount:</strong> ${selectedOrder.amount}</p>
+          <p><strong>Payment Method:</strong> {fullData.paymentMethod}</p>
+          <p><strong>Shipping Cost:</strong> ${fullData.shippingCost}</p>
+          <p><strong>Discount:</strong> ₹{fullData.discount}</p>
+          <p><strong>Tax:</strong> ${fullData.tax}</p>
+
+          <hr style={{ margin: '1rem 0' }} />
+
+          <h4>🧾 Products:</h4>
+          <ul style={{ marginLeft: '1rem' }}>
+            {fullData.cart.products.map((item, idx) => (
+              <li key={idx} style={{ marginBottom: '0.5rem' }}>
+                <strong>{item.product?.title || 'N/A'}</strong> (x{item.quantity}) — ${item.priceAtTime}
+              </li>
+            ))}
+          </ul>
+
+          <hr style={{ margin: '1rem 0' }} />
+
+          <h4>📍 Shipping Address:</h4>
+          <p>{fullData.shippingAddress?.address}, {fullData.shippingAddress?.city}, {fullData.shippingAddress?.state} - {fullData.shippingAddress?.pincode}</p>
+          <p>Phone: {fullData.shippingAddress?.phoneno}</p>
+          <p>Notes: {fullData.shippingAddress?.notes || "None"}</p>
+
+          <hr style={{ margin: '1rem 0' }} />
+
+
+          <button
+            style={{
+              marginTop: '1.5rem',
+              backgroundColor: '#4f46e5',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.5rem',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+            onClick={() => setSelectedOrder(null)}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <section style={{ marginBottom: '6rem' }}>
@@ -26,11 +116,13 @@ const OrderHistory = ({ orders = [] }) => {
         <Package color="#a855f7" /> Order History
       </h2>
 
-      {displayOrders.length === 0 ? (
+      {loading ? (
+        <p>Loading orders...</p>
+      ) : orders.length === 0 ? (
         <p style={{ color: '#6b7280', fontStyle: 'italic' }}>No past orders found.</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {displayOrders.map(order => (
+          {orders.map(order => (
             <div
               key={order.id}
               style={{
@@ -48,15 +140,17 @@ const OrderHistory = ({ orders = [] }) => {
               }}
             >
               <div style={{ flex: 1, minWidth: '220px' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1f2937', marginBottom: '0.25rem' }}>Order ID: <span style={{ color: '#6b7280' }}>#{order.id}</span></h3>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1f2937', marginBottom: '0.25rem' }}>
+                  Order ID: <span style={{ color: '#6b7280' }}>#{order.id}</span>
+                </h3>
                 <p style={{ color: '#374151' }}>Placed on: <strong>{order.date}</strong></p>
                 <p style={{ color: '#374151' }}>Items: {order.items}</p>
                 <p style={{ color: '#4b5563' }}>Status: <span style={{
                   fontWeight: '600',
                   color:
                     order.status === 'Delivered' ? '#10b981' :
-                    order.status === 'Cancelled' ? '#ef4444' :
-                    '#f59e0b'
+                      order.status === 'Cancelled' ? '#ef4444' :
+                        '#f59e0b'
                 }}>{order.status}</span></p>
               </div>
 
@@ -64,7 +158,7 @@ const OrderHistory = ({ orders = [] }) => {
                 <p style={{ fontSize: '1.125rem', fontWeight: '700', color: '#a855f7' }}>₹{order.amount}</p>
                 <button
                   style={{
-                    marginTop: '0.75rem',
+                    marginTop: '0.5rem',
                     padding: '0.5rem 1.25rem',
                     borderRadius: '9999px',
                     backgroundColor: '#a855f7',
@@ -72,18 +166,37 @@ const OrderHistory = ({ orders = [] }) => {
                     fontWeight: '600',
                     border: 'none',
                     cursor: 'pointer',
-                    transition: 'background 0.3s ease'
+                    marginRight: '0.5rem'
                   }}
-                  onMouseEnter={e => e.currentTarget.style.backgroundColor = '#9333ea'}
-                  onMouseLeave={e => e.currentTarget.style.backgroundColor = '#a855f7'}
+                  onClick={() => setSelectedOrder(order)}
                 >
                   View Details
                 </button>
+
+                {(order.status !== 'Delivered' && order.status !== 'Cancelled') && (
+                  <button
+                    style={{
+                      marginTop: '0.5rem',
+                      padding: '0.5rem 1.25rem',
+                      borderRadius: '9999px',
+                      backgroundColor: '#10b981',
+                      color: 'white',
+                      fontWeight: '600',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => setSelectedOrder(order)}
+                  >
+                    Pay Now
+                  </button>
+                )}
               </div>
             </div>
           ))}
         </div>
       )}
+
+      {renderDetailsModal()}
     </section>
   );
 };
