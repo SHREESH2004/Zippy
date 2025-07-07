@@ -1,8 +1,10 @@
 import express from 'express';
 import Stripe from 'stripe';
-
+import { configDotenv } from 'dotenv';
+configDotenv();
 const router = express.Router();
-const stripe = new Stripe("sk_test_51RiLp2CVlmo1BCrahjpjuz1lP2Xnt97cRPzDU2IQF9ODmr9ElFULxWm4l8Hx5i8yjITyxU1FgBQgtzQMZEQ8EV6q00w0EMjO8k"); // ✅ Keep secret
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 
 router.post('/create-checkout-session', async (req, res) => {
   const { amount, orderId } = req.body;
