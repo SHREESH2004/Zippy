@@ -6,6 +6,7 @@ import ZippyChat from './pages/shopping/ZippyAI';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkAuth } from './store/auth-slice';
 import Account from './pages/shopping/Account';
+import Payments from './pages/shopping/Payments';
 // Auth Guard
 import Checks from "../components/common/checkaith";
 
@@ -72,6 +73,7 @@ function App() {
           <Route path="listing" element={<Listing />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="account" element={<Account />} />
+          <Route path="payments" element={<Payments />} />
         </Route>
 
         {/* Fallback Route */}

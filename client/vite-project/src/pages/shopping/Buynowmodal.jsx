@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import Payments from './Payments';
 
 const BuyNowModal = ({ isOpen, onClose, addresses, cartId, total, userId }) => {
   const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -11,6 +12,7 @@ const BuyNowModal = ({ isOpen, onClose, addresses, cartId, total, userId }) => {
     if (!userId || !cartId || !selectedAddressId || !paymentMethod) {
       toast.error("Missing required information.");
       return;
+      
     }
 
     const orderPayload = {

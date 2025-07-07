@@ -8,6 +8,7 @@ import cartRoutes from './routes/cart.routes.js';
 import addressRoutes from './routes/address.routes.js';
 import ordersRoutes from './routes/orders.routes.js';
 import aiRoutes from './routes/ai.routes.js';
+import paymentRouter from './routes/payment.router.js'; // ✅ Keep secret
 configDotenv();
 const app=express();
 app.use(cors({
@@ -26,4 +27,5 @@ app.use('/cart', cartRoutes);
 app.use('/address', addressRoutes);
 app.use('/orders', ordersRoutes);
 app.use('/ai', aiRoutes);
+app.use('/api', paymentRouter); 
 export default app;

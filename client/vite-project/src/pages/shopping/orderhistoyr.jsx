@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Package } from 'lucide-react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const navigate = useNavigate();
 
   const fetchOrders = async () => {
     try {
@@ -32,13 +34,23 @@ const OrderHistory = () => {
     }
   };
 
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      await axios.put(`http://localhost:3000/orders/${orderId}/status`, {
+        status: newStatus,
+      });
+      fetchOrders();
+    } catch (err) {
+      console.error('Failed to update status:', err);
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
   }, []);
 
   const renderDetailsModal = () => {
     if (!selectedOrder) return null;
-
     const { fullData } = selectedOrder;
 
     return (
@@ -56,11 +68,11 @@ const OrderHistory = () => {
           </h3>
           <p><strong>Placed On:</strong> {selectedOrder.date}</p>
           <p><strong>Status:</strong> {selectedOrder.status}</p>
-          <p><strong>Total Amount:</strong> ${selectedOrder.amount}</p>
+          <p><strong>Total Amount:</strong> ₹{selectedOrder.amount}</p>
           <p><strong>Payment Method:</strong> {fullData.paymentMethod}</p>
-          <p><strong>Shipping Cost:</strong> ${fullData.shippingCost}</p>
+          <p><strong>Shipping Cost:</strong> ₹{fullData.shippingCost}</p>
           <p><strong>Discount:</strong> ₹{fullData.discount}</p>
-          <p><strong>Tax:</strong> ${fullData.tax}</p>
+          <p><strong>Tax:</strong> ₹{fullData.tax}</p>
 
           <hr style={{ margin: '1rem 0' }} />
 
@@ -68,20 +80,18 @@ const OrderHistory = () => {
           <ul style={{ marginLeft: '1rem' }}>
             {fullData.cart.products.map((item, idx) => (
               <li key={idx} style={{ marginBottom: '0.5rem' }}>
-                <strong>{item.product?.title || 'N/A'}</strong> (x{item.quantity}) — ${item.priceAtTime}
+                <strong>{item.product?.title || 'N/A'}</strong> (x{item.quantity}) — ₹{item.priceAtTime}
               </li>
             ))}
           </ul>
 
           <hr style={{ margin: '1rem 0' }} />
-
           <h4>📍 Shipping Address:</h4>
           <p>{fullData.shippingAddress?.address}, {fullData.shippingAddress?.city}, {fullData.shippingAddress?.state} - {fullData.shippingAddress?.pincode}</p>
           <p>Phone: {fullData.shippingAddress?.phoneno}</p>
           <p>Notes: {fullData.shippingAddress?.notes || "None"}</p>
 
           <hr style={{ margin: '1rem 0' }} />
-
 
           <button
             style={{
@@ -154,8 +164,9 @@ const OrderHistory = () => {
                 }}>{order.status}</span></p>
               </div>
 
-              <div style={{ textAlign: 'right', minWidth: '160px' }}>
+              <div style={{ textAlign: 'right', minWidth: '200px' }}>
                 <p style={{ fontSize: '1.125rem', fontWeight: '700', color: '#a855f7' }}>₹{order.amount}</p>
+
                 <button
                   style={{
                     marginTop: '0.5rem',
@@ -166,7 +177,7 @@ const OrderHistory = () => {
                     fontWeight: '600',
                     border: 'none',
                     cursor: 'pointer',
-                    marginRight: '0.5rem'
+                    marginBottom: '0.5rem',
                   }}
                   onClick={() => setSelectedOrder(order)}
                 >
@@ -176,18 +187,23 @@ const OrderHistory = () => {
                 {(order.status !== 'Delivered' && order.status !== 'Cancelled') && (
                   <button
                     style={{
-                      marginTop: '0.5rem',
                       padding: '0.5rem 1.25rem',
-                      borderRadius: '9999px',
+                      borderRadius: '0.75rem',
                       backgroundColor: '#10b981',
                       color: 'white',
                       fontWeight: '600',
                       border: 'none',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      marginTop: '0.5rem',
                     }}
-                    onClick={() => setSelectedOrder(order)}
+                    onClick={() => {
+                      updateOrderStatus(order.fullData._id, 'Confirmed');
+                      localStorage.setItem('paymentOrderId', order.fullData._id);
+                      localStorage.setItem('paymentTotalAmount', order.amount);
+                      navigate('/shopping/payments');
+                    }}
                   >
-                    Pay Now
+                    Pay with Google Pay →
                   </button>
                 )}
               </div>
