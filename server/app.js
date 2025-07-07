@@ -6,6 +6,7 @@ import userRoutes from "./routes/user.routes.js"
 import adminProductRouter from './routes/admin/product.routes.js'
 import cartRoutes from './routes/cart.routes.js';
 import addressRoutes from './routes/address.routes.js';
+import ordersRoutes from './routes/orders.routes.js';
 configDotenv();
 const app=express();
 app.use(cors({
@@ -22,4 +23,5 @@ app.use('/user',userRoutes);
 app.use('/admin/products',adminProductRouter);
 app.use('/cart', cartRoutes);
 app.use('/address', addressRoutes);
+app.use('/orders', ordersRoutes);
 export default app;
