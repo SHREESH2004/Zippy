@@ -1,34 +1,56 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const AdminOrders = () => {
+  const [orders, setOrders] = useState([]);
   const [activeOrder, setActiveOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const orders = [
-    { id: '#ORD1001', customer: 'Rohit Sharma', date: 'April 15, 2025', amount: '₹2,450', status: 'Delivered' },
-    { id: '#ORD1002', customer: 'Anjali Mehta', date: 'April 14, 2025', amount: '₹1,980', status: 'Shipped' },
-    { id: '#ORD1003', customer: 'Kunal Jain', date: 'April 13, 2025', amount: '₹5,320', status: 'Pending' },
-    { id: '#ORD1004', customer: 'Sara Ali', date: 'April 12, 2025', amount: '₹3,760', status: 'Cancelled' },
-  ];
-
-  const openDetails = (order) => {
-    setActiveOrder(order);
+  const fetchOrders = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/orders');
+      setOrders(res.data || []);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError('⚠️ Failed to fetch orders.');
+      setLoading(false);
+    }
   };
 
-  const closeDetails = () => {
-    setActiveOrder(null);
+  const updateStatus = async (orderId, newStatus) => {
+    try {
+      await axios.put(`http://localhost:3000/orders/${orderId}/status`, { status: newStatus });
+      fetchOrders();
+      setActiveOrder(null);
+    } catch (err) {
+      console.error(err);
+      alert('❌ Failed to update order status.');
+    }
   };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  if (loading) return <div style={headingStyles}>🔄 Loading orders...</div>;
+  if (error) return <div style={headingStyles}>{error}</div>;
 
   return (
     <div style={containerStyles}>
-      <h1 style={headingStyles}>Admin Orders</h1>
-      <div>
+      <h1 style={headingStyles}>📦 Zippy Orders</h1>
+
+      <div style={listContainer}>
         {orders.map((order) => (
-          <div key={order.id} style={rowStyles}>
-            <span style={idStyle}>{order.id}</span>
-            <span style={customerStyle}>{order.customer}</span>
-            <button onClick={() => openDetails(order)} style={detailsBtn}>
-              Details
-            </button>
+          <div key={order._id} style={orderRow}>
+            <div style={rowCol}><strong>Order ID:</strong> #{order._id.slice(-6)}</div>
+            <div style={rowCol}><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</div>
+            <div style={rowCol}><strong>Amount:</strong> ${order.totalAmount}</div>
+            <div style={rowCol}>
+              <span style={{ ...statusTag, ...getStatusStyle(order.status) }}>{order.status}</span>
+            </div>
+            <button style={viewBtn} onClick={() => setActiveOrder(order)}>🔍 Details</button>
           </div>
         ))}
       </div>
@@ -36,20 +58,18 @@ const AdminOrders = () => {
       {activeOrder && (
         <div style={modalBackdrop}>
           <div style={modalContent}>
-            <h2 style={{ marginBottom: '1rem' }}>{activeOrder.id} Details</h2>
-            <p><strong>Customer:</strong> {activeOrder.customer}</p>
-            <p><strong>Date:</strong> {activeOrder.date}</p>
-            <p><strong>Amount:</strong> {activeOrder.amount}</p>
-            <p>
-              <strong>Status:</strong>{' '}
-              <span style={{ ...statusTag, ...getStatusStyle(activeOrder.status) }}>
-                {activeOrder.status}
-              </span>
-            </p>
+            <h2 style={modalTitle}>Order #{activeOrder._id.slice(-6)}</h2>
+            <p><strong>Date:</strong> {new Date(activeOrder.createdAt).toLocaleString()}</p>
+            <p><strong>Total:</strong> ₹{activeOrder.totalAmount}</p>
+            <p><strong>Payment:</strong> {activeOrder.paymentMethod}</p>
+            <p><strong>Status:</strong> <span style={{ ...statusTag, ...getStatusStyle(activeOrder.status) }}>{activeOrder.status}</span></p>
+            <p><strong>Shipping To:</strong> {activeOrder.shippingAddress?.name}, {activeOrder.shippingAddress?.city}</p>
+            <p><strong>Billing Address:</strong> {activeOrder.address?.name}, {activeOrder.address?.city}</p>
+
             <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-              <button style={confirmBtn}>✅ Confirm</button>
-              <button style={cancelBtn}>❌ Cancel</button>
-              <button onClick={closeDetails} style={closeBtn}>Close</button>
+              <button style={confirmBtn} onClick={() => updateStatus(activeOrder._id, 'Delivered')}>✅ Mark Delivered</button>
+              <button style={cancelBtn} onClick={() => updateStatus(activeOrder._id, 'Cancelled')}>❌ Cancel</button>
+              <button onClick={() => setActiveOrder(null)} style={closeBtn}>Close</button>
             </div>
           </div>
         </div>
@@ -58,7 +78,7 @@ const AdminOrders = () => {
   );
 };
 
-// 🔧 Styles
+// 🎨 Styles
 const containerStyles = {
   padding: '2rem',
   fontFamily: 'Segoe UI, sans-serif',
@@ -66,60 +86,71 @@ const containerStyles = {
 
 const headingStyles = {
   fontSize: '2rem',
-  fontWeight: '600',
+  fontWeight: '700',
+  color: '#111827',
   marginBottom: '2rem',
 };
 
-const rowStyles = {
+const listContainer = {
   display: 'flex',
-  justifyContent: 'space-between',
+  flexDirection: 'column',
+  gap: '1rem',
+};
+
+const orderRow = {
+  backgroundColor: '#ffffff',
+  borderRadius: '10px',
+  padding: '1rem 1.5rem',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+  display: 'flex',
   alignItems: 'center',
-  padding: '1rem',
-  backgroundColor: '#f9fafb',
-  borderBottom: '1px solid #e5e7eb',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  gap: '1rem',
+};
+
+const rowCol = {
+  flex: '1 1 160px',
+  color: '#374151',
+  fontSize: '0.95rem',
+};
+
+const viewBtn = {
+  padding: '0.4rem 1rem',
+  backgroundColor: '#6366f1',
+  color: '#fff',
   borderRadius: '8px',
-  marginBottom: '1rem',
-};
-
-const idStyle = {
   fontWeight: '600',
-  color: '#1f2937',
-};
-
-const customerStyle = {
-  color: '#4b5563',
-};
-
-const detailsBtn = {
-  backgroundColor: '#4f46e5',
-  color: 'white',
-  padding: '0.5rem 1rem',
-  borderRadius: '9999px',
   border: 'none',
   cursor: 'pointer',
-  fontWeight: '600',
 };
 
-// 🪟 Modal
+// Modal styles
 const modalBackdrop = {
   position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
+  inset: 0,
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  zIndex: 999,
+  zIndex: 1000,
 };
 
 const modalContent = {
-  backgroundColor: 'white',
+  backgroundColor: '#fff',
   padding: '2rem',
-  borderRadius: '12px',
-  width: '400px',
+  borderRadius: '14px',
+  width: '500px',
+  maxHeight: '80vh',
+  overflowY: 'auto',
   boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+};
+
+const modalTitle = {
+  fontSize: '1.5rem',
+  fontWeight: '600',
+  color: '#111827',
+  marginBottom: '1rem',
 };
 
 const confirmBtn = {
@@ -153,10 +184,11 @@ const closeBtn = {
 };
 
 const statusTag = {
-  padding: '0.25rem 0.75rem',
+  padding: '0.3rem 0.8rem',
   borderRadius: '1rem',
-  fontSize: '0.85rem',
+  fontSize: '0.8rem',
   fontWeight: '600',
+  display: 'inline-block',
 };
 
 const getStatusStyle = (status) => {
@@ -169,6 +201,8 @@ const getStatusStyle = (status) => {
       return { backgroundColor: '#fef9c3', color: '#92400e' };
     case 'Cancelled':
       return { backgroundColor: '#fee2e2', color: '#991b1b' };
+    case 'Confirmed':
+      return { backgroundColor: '#ede9fe', color: '#6b21a8' };
     default:
       return { backgroundColor: '#f3f4f6', color: '#4b5563' };
   }

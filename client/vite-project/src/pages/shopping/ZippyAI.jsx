@@ -1,135 +1,36 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const ZippyChatPopup = () => {
+const ZippyChatPopup = ({ showFloating = true }) => {
   const [open, setOpen] = useState(false);
   const [prompt, setPrompt] = useState('');
-  const [responseData, setResponseData] = useState(null);
+  const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const styles = {
-    floatingBtn: {
-      position: 'fixed',
-      bottom: '24px',
-      right: '24px',
-      backgroundColor: '#f43f5e',
-      color: '#fff',
-      padding: '14px 24px',
-      borderRadius: '999px',
-      fontWeight: '600',
-      fontSize: '16px',
-      boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
-      cursor: 'pointer',
-      zIndex: 9999,
-      border: 'none',
-    },
-    overlay: {
-      position: 'fixed',
-      inset: 0,
-      backgroundColor: 'rgba(0,0,0,0.3)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 9998,
-    },
-    popup: {
-      backgroundColor: '#fff',
-      width: '100%',
-      maxWidth: '420px',
-      borderRadius: '16px',
-      padding: '24px',
-      position: 'relative',
-      boxShadow: '0 6px 30px rgba(0,0,0,0.3)',
-      animation: 'fadeIn 0.3s ease-in-out',
-      maxHeight: '90vh',
-      overflowY: 'auto',
-    },
-    closeBtn: {
-      position: 'absolute',
-      top: '12px',
-      right: '12px',
-      background: 'none',
-      border: 'none',
-      fontSize: '20px',
-      color: '#f43f5e',
-      cursor: 'pointer',
-    },
-    heading: {
-      fontSize: '22px',
-      fontWeight: 'bold',
-      textAlign: 'center',
-      color: '#f43f5e',
-      marginBottom: '20px',
-    },
-    textarea: {
-      width: '100%',
-      padding: '12px',
-      borderRadius: '8px',
-      border: '1px solid #fda4af',
-      outline: 'none',
-      fontSize: '14px',
-      resize: 'none',
-      marginBottom: '12px',
-    },
-    button: {
-      width: '100%',
-      padding: '10px',
-      borderRadius: '8px',
-      backgroundColor: '#f43f5e',
-      color: '#fff',
-      fontWeight: '600',
-      fontSize: '15px',
-      border: 'none',
-      cursor: 'pointer',
-      marginBottom: '16px',
-    },
-    productCard: {
-      display: 'flex',
-      gap: '10px',
-      border: '1px solid #eee',
-      padding: '10px',
-      borderRadius: '10px',
-      marginBottom: '10px',
-      boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
-    },
-    productImg: {
-      width: '60px',
-      height: '60px',
-      borderRadius: '8px',
-      objectFit: 'cover',
-    },
-    productTitle: {
-      fontSize: '14px',
-      fontWeight: '600',
-      color: '#f43f5e',
-      marginBottom: '2px',
-    },
-    productDesc: {
-      fontSize: '12px',
-      color: '#444',
-    },
-    productPrice: {
-      fontSize: '13px',
-      fontWeight: '500',
-      marginTop: '4px',
-      color: '#333',
-    },
-    lineThrough: {
-      textDecoration: 'line-through',
-      color: '#999',
-      marginLeft: '6px',
-    },
-  };
-
-  const handleSend = async () => {
+  const sendMessage = async () => {
     if (!prompt.trim()) return;
+    const current = { question: prompt, answer: '...' };
+    setChatHistory((prev) => [...prev, current]);
+    setPrompt('');
     setLoading(true);
+
     try {
       const { data } = await axios.post('http://localhost:3000/ai/zippy-chat', { prompt });
-      setResponseData(data?.response || { message: "No response", products: [] });
+      const response = data?.response?.message || 'No response';
+      const products = data?.response?.products || [];
+      setChatHistory((prev) =>
+        prev.map((item, i) =>
+          i === prev.length - 1 ? { ...item, answer: response, products } : item
+        )
+      );
     } catch (err) {
-      console.error('Zippy AI Error:', err.message);
-      setResponseData({ message: '❌ Something went wrong!', products: [] });
+      setChatHistory((prev) =>
+        prev.map((item, i) =>
+          i === prev.length - 1
+            ? { ...item, answer: '❌ Failed to get response.', products: [] }
+            : item
+        )
+      );
     } finally {
       setLoading(false);
     }
@@ -137,73 +38,238 @@ const ZippyChatPopup = () => {
 
   return (
     <>
-      <button style={styles.floatingBtn} onClick={() => setOpen(true)}>
-        💬 Zippy AI
-      </button>
+      {showFloating && (
+        <button
+          onClick={() => setOpen(true)}
+          style={styles.floatingBtn}
+        >
+          💬 Zippy AI 🛒
+        </button>
+      )}
 
       {open && (
         <div style={styles.overlay}>
           <div style={styles.popup}>
-            <button
-              style={styles.closeBtn}
-              onClick={() => {
-                setOpen(false);
-                setPrompt('');
-                setResponseData(null);
-              }}
-              aria-label="Close Zippy AI"
-            >
-              ✖
-            </button>
+            <button style={styles.closeBtn} onClick={() => setOpen(false)}>✖</button>
+            <h2 style={styles.heading}>Zippy AI Assistant 🛍️</h2>
 
-            <div style={styles.heading}>Zippy AI Assistant</div>
+            {chatHistory.length === 0 && (
+              <div style={styles.guidelinesBox}>
+                <h4 style={styles.guidelinesTitle}>✨ Tips to Ask Zippy</h4>
+                <ul style={styles.guidelinesList}>
+                  <li><strong>🧥 Category:</strong> "Show men's jackets"</li>
+                  <li><strong>🏷 Brand:</strong> "Nike sneakers"</li>
+                  <li><strong>💰 Price:</strong> "Under $1000"</li>
+                  <li><strong>🔍 Keywords:</strong> "casual", "office wear", etc.</li>
+                </ul>
+              </div>
+            )}
 
-            <textarea
-              rows={3}
-              placeholder="Try: Show me trending T-shirts under ₹500"
-              style={styles.textarea}
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-            />
-
-            <button style={styles.button} onClick={handleSend} disabled={loading}>
-              {loading ? 'Searching...' : 'Ask Zippy'}
-            </button>
-
-            {responseData && (
-              <>
-                <div style={{ fontSize: '14px', marginBottom: '10px', color: '#333' }}>
-                  {responseData.message}
-                </div>
-
-                {responseData.products?.length > 0 ? (
-                  responseData.products.map((prod) => (
-                    <div key={prod._id} style={styles.productCard}>
+            <div style={styles.chatBox}>
+              {chatHistory.map((entry, idx) => (
+                <div key={idx} style={styles.chatEntry}>
+                  <div style={styles.userMsg}>🧑‍💻 {entry.question}</div>
+                  <div style={styles.botMsg}>🤖 {entry.answer}</div>
+                  {entry.products?.map((prod) => (
+                    <div
+                      key={prod._id}
+                      style={{ ...styles.productCard }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1.0)'}
+                    >
                       <img src={prod.image} alt={prod.title} style={styles.productImg} />
                       <div>
                         <div style={styles.productTitle}>{prod.title}</div>
-                        <div style={styles.productDesc}>{prod.description}</div>
                         <div style={styles.productPrice}>
-                          ₹{prod.price}
-                          {prod.salePrice && (
-                            <span style={styles.lineThrough}>₹{prod.salePrice}</span>
-                          )}
+                          ${prod.price}
+                          <span style={styles.lineThrough}> ${prod.salePrice}</span>
                         </div>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <p style={{ fontSize: '13px', color: '#999', textAlign: 'center' }}>
-                    🕵️‍♀️ No products matched your query.
-                  </p>
-                )}
-              </>
-            )}
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              rows={2}
+              placeholder="Type your product search here..."
+              style={styles.textarea}
+            />
+
+            <button style={styles.sendBtn} onClick={sendMessage} disabled={loading}>
+              {loading ? 'Thinking...' : 'Send'}
+            </button>
           </div>
         </div>
       )}
     </>
   );
+};
+
+const styles = {
+  floatingBtn: {
+    position: 'fixed',
+    bottom: '24px',
+    right: '24px',
+    background: 'linear-gradient(to right, #22c55e, #86efac)',
+    color: '#fff',
+    border: 'none',
+    padding: '14px 24px',
+    borderRadius: '999px',
+    fontWeight: 'bold',
+    fontSize: '16px',
+    zIndex: 9999,
+    boxShadow: '0 6px 16px rgba(0,0,0,0.25)',
+    cursor: 'pointer',
+    transition: 'transform 0.3s',
+  },
+  overlay: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10000,
+  },
+  popup: {
+    background: '#fff',
+    borderRadius: '20px',
+    padding: '24px',
+    width: '560px',
+    height: '88vh',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative',
+    boxShadow: '0 16px 36px rgba(0,0,0,0.25)',
+  },
+  closeBtn: {
+    position: 'absolute',
+    top: '16px',
+    right: '20px',
+    fontSize: '22px',
+    color: '#16a34a',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  heading: {
+    textAlign: 'center',
+    fontSize: '22px',
+    fontWeight: 'bold',
+    color: '#22c55e',
+    marginBottom: '18px',
+  },
+  chatBox: {
+    flex: 1,
+    overflowY: 'auto',
+    marginBottom: '12px',
+    padding: '10px',
+    border: '1px solid #d3f9d8',
+    borderRadius: '14px',
+    background: '#fafff6',
+  },
+  chatEntry: {
+    marginBottom: '16px',
+  },
+  userMsg: {
+    background: '#dcfce7',
+    padding: '10px 14px',
+    borderRadius: '10px',
+    marginBottom: '6px',
+    maxWidth: '90%',
+    fontWeight: 500,
+    color: '#166534',
+    alignSelf: 'flex-end',
+  },
+  botMsg: {
+    background: '#ecfdf5',
+    padding: '10px 14px',
+    borderRadius: '10px',
+    marginBottom: '6px',
+    maxWidth: '90%',
+    fontWeight: 500,
+    color: '#166534',
+    alignSelf: 'flex-start',
+  },
+  textarea: {
+    width: '100%',
+    borderRadius: '10px',
+    padding: '12px',
+    border: '1px solid #a3e635',
+    marginBottom: '12px',
+    fontSize: '14px',
+    resize: 'none',
+    outline: 'none',
+  },
+  sendBtn: {
+    width: '100%',
+    padding: '12px',
+    borderRadius: '12px',
+    backgroundColor: '#22c55e',
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: '16px',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  productCard: {
+    display: 'flex',
+    gap: '12px',
+    padding: '10px',
+    borderRadius: '10px',
+    background: '#f0fdf4',
+    border: '1px solid #bbf7d0',
+    marginTop: '6px',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    cursor: 'pointer',
+  },
+  productImg: {
+    width: '60px',
+    height: '60px',
+    objectFit: 'cover',
+    borderRadius: '6px',
+  },
+  productTitle: {
+    fontSize: '15px',
+    fontWeight: '600',
+    color: '#15803d',
+  },
+  productPrice: {
+    fontSize: '14px',
+    color: '#444',
+  },
+  lineThrough: {
+    textDecoration: 'line-through',
+    color: '#999',
+    marginLeft: '6px',
+    fontSize: '13px',
+  },
+  guidelinesBox: {
+    backgroundColor: '#f0fdf4',
+    padding: '16px',
+    borderRadius: '14px',
+    border: '1px solid #bbf7d0',
+    marginBottom: '16px',
+    color: '#166534',
+    fontSize: '14px',
+    lineHeight: '1.6',
+    boxShadow: '0 4px 12px rgba(34,197,94,0.08)',
+  },
+  guidelinesTitle: {
+    fontWeight: '600',
+    fontSize: '15.5px',
+    marginBottom: '10px',
+    color: '#15803d',
+  },
+  guidelinesList: {
+    paddingLeft: '20px',
+    listStyle: 'disc',
+  },
 };
 
 export default ZippyChatPopup;
