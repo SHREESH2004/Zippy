@@ -62,7 +62,6 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
-// 🔄 Updated: Get user's own orders using userId from body instead of req.user
 export const getMyOrders = async (req, res) => {
   try {
     const { userId } = req.body;
