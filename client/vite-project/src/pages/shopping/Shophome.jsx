@@ -25,7 +25,10 @@ const Shophome = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/admin/products/products/all');
+        const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+        const response = await fetch(`${SERVER_URL}/admin/products/products/all`);
+
         const data = await response.json();
         if (data.success) {
           setProducts(data.data);

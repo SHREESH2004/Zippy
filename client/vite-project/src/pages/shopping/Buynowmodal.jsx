@@ -12,7 +12,7 @@ const BuyNowModal = ({ isOpen, onClose, addresses, cartId, total, userId }) => {
     if (!userId || !cartId || !selectedAddressId || !paymentMethod) {
       toast.error("Missing required information.");
       return;
-      
+
     }
 
     const orderPayload = {
@@ -28,7 +28,9 @@ const BuyNowModal = ({ isOpen, onClose, addresses, cartId, total, userId }) => {
     };
 
     try {
-      const response = await axios.post("http://localhost:3000/orders", orderPayload);
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const response = await axios.post(`${SERVER_URL}/orders`, orderPayload);
       toast.success("🎉 Order placed successfully!");
       console.log("Order response:", response.data);
       onClose();

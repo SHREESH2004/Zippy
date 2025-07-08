@@ -31,10 +31,14 @@ const ImageUpload = () => {
     formData.append('image', file);
 
     try {
-      const response = await fetch('http://localhost:3000/admin/products/upload', {
+
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const response = await fetch(`${SERVER_URL}/admin/products/upload`, {
         method: 'POST',
         body: formData,
       });
+
 
       if (!response.ok) {
         throw new Error('Failed to upload image');
@@ -54,11 +58,11 @@ const ImageUpload = () => {
     <div style={containerStyles}>
       <h2 style={headingStyles}>Upload an Image</h2>
 
-      <input 
-        type="file" 
-        accept="image/*" 
-        onChange={handleImageChange} 
-        style={inputStyles} 
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+        style={inputStyles}
       />
 
       {image && (
@@ -68,10 +72,10 @@ const ImageUpload = () => {
         </div>
       )}
 
-      <button 
+      <button
         type="button"
-        style={uploadButtonStyles} 
-        onClick={handleImageUpload} 
+        style={uploadButtonStyles}
+        onClick={handleImageUpload}
         disabled={uploading}
       >
         {uploading ? 'Uploading...' : 'Upload Image'}
@@ -80,7 +84,7 @@ const ImageUpload = () => {
       {uploadSuccess && (
         <div style={successMessageStyles}>
           <h3>Upload Successful!</h3>
-          
+
           <p><strong>Optimized URL:</strong></p>
           <a href={uploadSuccess.data.optimizeUrl} target="_blank" rel="noopener noreferrer">
             {uploadSuccess.data.optimizeUrl}

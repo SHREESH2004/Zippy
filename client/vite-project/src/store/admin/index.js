@@ -12,9 +12,12 @@ export const deleteProduct = createAsyncThunk(
   'adminProducts/deleteProduct',
   async (productId, thunkAPI) => {
     try {
-      const response = await fetch(`http://localhost:3000/admin/products/products/${productId}`, {
-        method: 'DELETE',
-      });
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const response = await fetch(`${SERVER_URL}/admin/products/products/${productId}`
+        , {
+          method: 'DELETE',
+        });
       const data = await response.json();
 
       if (!data.success) {
@@ -33,7 +36,9 @@ export const editProduct = createAsyncThunk(
   'adminProducts/editProduct',
   async (updatedProduct, thunkAPI) => {
     try {
-      const response = await fetch(`http://localhost:3000/admin/products/products/${updatedProduct._id}`, {
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const response = await fetch(`${SERVER_URL}/admin/products/products/${updatedProduct._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -56,13 +61,16 @@ export const addProduct = createAsyncThunk(
   'adminProducts/addProduct',
   async (productData, thunkAPI) => {
     try {
-      const response = await fetch('http://localhost:3000/admin/products/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(productData), 
-      });
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const response = await fetch(`${SERVER_URL}/admin/products/products`
+        , {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productData),
+        });
 
       if (!response.ok) {
         throw new Error('Failed to add product');
@@ -85,7 +93,7 @@ const adminProductSlice = createSlice({
     setInitialProducts: (state, action) => {
       state.productList = action.payload;
     },
-},
+  },
   extraReducers: (builder) => {
     builder
       .addCase(addProduct.pending, (state) => {

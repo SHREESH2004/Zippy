@@ -15,7 +15,8 @@ const ZippyChatPopup = ({ showFloating = true }) => {
     setLoading(true);
 
     try {
-      const { data } = await axios.post('http://localhost:3000/ai/zippy-chat', { prompt });
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+      const { data } = await axios.post(`${SERVER_URL}/ai/zippy-chat`, { prompt });
       const response = data?.response?.message || 'No response';
       const products = data?.response?.products || [];
       setChatHistory((prev) =>

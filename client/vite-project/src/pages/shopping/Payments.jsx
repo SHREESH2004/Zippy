@@ -8,7 +8,9 @@ const Payments = () => {
 
   const handleStripePayment = async () => {
     try {
-      const res = await axios.post('http://localhost:3000/api/create-checkout-session', {
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const res = await axios.post(`${SERVER_URL}/api/create-checkout-session`, {
         amount: totalAmount,
         orderId,
       });
@@ -19,7 +21,7 @@ const Payments = () => {
         toast.error("❌ Couldn't initiate payment session.");
       }
     } catch (err) {
-        console.error("Payment error:", err);
+      console.error("Payment error:", err);
       toast.error("❌ Payment session failed");
     }
   };

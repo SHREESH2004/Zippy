@@ -9,7 +9,10 @@ const AdminOrders = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/orders');
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const res = await axios.get(`${SERVER_URL}/orders`);
+
       setOrders(res.data || []);
       setLoading(false);
     } catch (err) {
@@ -21,7 +24,12 @@ const AdminOrders = () => {
 
   const updateStatus = async (orderId, newStatus) => {
     try {
-      await axios.put(`http://localhost:3000/orders/${orderId}/status`, { status: newStatus });
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      await axios.put(`${SERVER_URL}/orders/${orderId}/status`, {
+        status: newStatus,
+      });
+
       fetchOrders();
       setActiveOrder(null);
     } catch (err) {

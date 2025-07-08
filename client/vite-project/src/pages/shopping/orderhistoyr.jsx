@@ -14,7 +14,10 @@ const OrderHistory = () => {
       const userId = localStorage.getItem('userId');
       if (!userId) return;
 
-      const response = await axios.get(`http://localhost:3000/orders/my?userId=${userId}`);
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const response = await axios.get(`${SERVER_URL}/orders/my?userId=${userId}`);
+
       const transformed = response.data
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .map(order => ({
@@ -36,9 +39,12 @@ const OrderHistory = () => {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      await axios.put(`http://localhost:3000/orders/${orderId}/status`, {
-        status: newStatus,
-      });
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      await axios.put(`${SERVER_URL}/orders/${orderId}/status`,
+        {
+          status: newStatus,
+        });
       fetchOrders();
     } catch (err) {
       console.error('Failed to update status:', err);

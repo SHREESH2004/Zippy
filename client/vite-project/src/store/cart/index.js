@@ -12,9 +12,12 @@ export const fetchCart = createAsyncThunk(
     'cart/fetchCart',
     async (userId, thunkAPI) => {
         try {
-            const res = await fetch(`http://localhost:3000/cart?userId=${userId}`, {
-                headers: { ...getAuthHeader() },
-            });
+            const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+            const res = await fetch(`${SERVER_URL}/cart?userId=${userId}`
+                , {
+                    headers: { ...getAuthHeader() },
+                });
             if (!res.ok) throw new Error('Failed to fetch cart');
             const data = await res.json();
             return {
@@ -32,7 +35,9 @@ export const addToCart = createAsyncThunk(
     'cart/addToCart',
     async ({ userId, productId, quantity }, thunkAPI) => {
         try {
-            const res = await fetch('http://localhost:3000/cart/add', {
+            const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+            const res = await fetch(`${SERVER_URL}/cart/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,7 +65,9 @@ export const updateCart = createAsyncThunk(
     'cart/updateCart',
     async ({ userId, productId, quantityChange }, thunkAPI) => {
         try {
-            const res = await fetch('http://localhost:3000/cart/update', {
+            const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+            const res = await fetch(`${SERVER_URL}/cart/update`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

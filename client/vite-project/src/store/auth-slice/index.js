@@ -17,7 +17,10 @@ export const register = createAsyncThunk(
   '/register',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:3000/user/register', formData);
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const response = await axios.post(`${SERVER_URL}/user/register`, formData);
+
       return response.data;
     } catch (error) {
       let errorMsg = error?.response?.data?.message || 'Registration failed';
@@ -38,7 +41,10 @@ export const login = createAsyncThunk(
   '/login',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:3000/user/login', formData);
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const response = await axios.post(`${SERVER_URL}/user/login`, formData);
+
       return response.data;
     } catch (error) {
       let errorMsg = 'Login failed';
@@ -85,7 +91,9 @@ export const checkAuth = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/user/check-auth', {
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      const response = await axios.get(`${SERVER_URL}/user/check-auth`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

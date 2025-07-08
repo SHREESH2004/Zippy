@@ -11,7 +11,10 @@ export const fetchAllProducts = createAsyncThunk(
     async (filters = {}, thunkAPI) => {
         try {
             const query = new URLSearchParams(filters).toString();
-            const url = `http://localhost:3000/admin/products/products${query ? `?${query}` : ''}`;
+            const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+            const url = `${SERVER_URL}/admin/products/products${query ? `?${query}` : ''}`;
+
 
             const response = await fetch(url);
 
@@ -20,7 +23,7 @@ export const fetchAllProducts = createAsyncThunk(
             }
 
             const data = await response.json();
-            return data.data; 
+            return data.data;
         } catch (error) {
             return thunkAPI.rejectWithValue(error.message || 'Something went wrong');
         }

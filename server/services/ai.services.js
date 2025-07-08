@@ -56,7 +56,10 @@ export const getZippyChatResponse = async (prompt) => {
       };
     }
 
-    const { data } = await axios.get('http://localhost:3000/admin/products/products/all');
+    const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+    const { data } = await axios.get(`${SERVER_URL}/admin/products/products/all`);
+
     const allProducts = data?.data || [];
 
     // Handle "description: football studs" prompt

@@ -18,10 +18,13 @@ const AccountService = () => {
   // 🔁 Fetch all account-related data
   const fetchAccountData = async () => {
     try {
-      const [addrRes, cartRes] = await Promise.all([
-        axios.get(`http://localhost:3000/address/${userId}`),
-        axios.get(`http://localhost:3000/cart/?userId=${userId}`, { headers }),
-      ]);
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+      const [addrRes, cartRes] =
+        await Promise.all([
+          axios.get(`${SERVER_URL}/address/${userId}`),
+          axios.get(`${SERVER_URL}/cart/?userId=${userId}`, { headers }),
+        ]);
+
 
       setAddresses(addrRes.data);
       setCart(cartRes.data.cart);
@@ -40,7 +43,9 @@ const AccountService = () => {
   // ✅ Add Address
   const handleAddAddress = async (formData) => {
     try {
-      await axios.post('http://localhost:3000/address/add', {
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+      // assuming `payload` holds your address data
+      await axios.post(`${SERVER_URL}/address/add`, {
         ...formData,
         userId,
       }, { headers });
@@ -54,7 +59,9 @@ const AccountService = () => {
   // ✅ Update Address
   const handleUpdateAddress = async (addressId, formData) => {
     try {
-      await axios.put(`http://localhost:3000/address/update/${addressId}`, formData, { headers });
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+      await axios.put(`${SERVER_URL}/address/update/${addressId}`, formData, { headers });
+
       fetchAccountData();
     } catch (err) {
       console.error('Update Address Error:', err);
@@ -64,7 +71,10 @@ const AccountService = () => {
   // ✅ Delete Address
   const handleDeleteAddress = async (addressId) => {
     try {
-      await axios.delete(`http://localhost:3000/address/delete/${addressId}`, { headers });
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+      await axios.delete(`${SERVER_URL}/address/delete/${addressId}`, { headers });
+
       fetchAccountData();
     } catch (err) {
       console.error('Delete Address Error:', err);
