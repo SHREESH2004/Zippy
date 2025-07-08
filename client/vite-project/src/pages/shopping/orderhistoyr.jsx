@@ -68,11 +68,11 @@ const OrderHistory = () => {
           </h3>
           <p><strong>Placed On:</strong> {selectedOrder.date}</p>
           <p><strong>Status:</strong> {selectedOrder.status}</p>
-          <p><strong>Total Amount:</strong> ₹{selectedOrder.amount}</p>
+          <p><strong>Total Amount:</strong> ${selectedOrder.amount}</p>
           <p><strong>Payment Method:</strong> {fullData.paymentMethod}</p>
-          <p><strong>Shipping Cost:</strong> ₹{fullData.shippingCost}</p>
-          <p><strong>Discount:</strong> ₹{fullData.discount}</p>
-          <p><strong>Tax:</strong> ₹{fullData.tax}</p>
+          <p><strong>Shipping Cost:</strong> ${fullData.shippingCost}</p>
+          <p><strong>Discount:</strong> ${fullData.discount}</p>
+          <p><strong>Tax:</strong> ${fullData.tax}</p>
 
           <hr style={{ margin: '1rem 0' }} />
 
@@ -165,7 +165,7 @@ const OrderHistory = () => {
               </div>
 
               <div style={{ textAlign: 'right', minWidth: '200px' }}>
-                <p style={{ fontSize: '1.125rem', fontWeight: '700', color: '#a855f7' }}>₹{order.amount}</p>
+                <p style={{ fontSize: '1.125rem', fontWeight: '700', color: '#a855f7' }}>${order.amount}</p>
 
                 <button
                   style={{
@@ -203,7 +203,7 @@ const OrderHistory = () => {
                       navigate('/shopping/payments');
                     }}
                   >
-                    Pay with Google Pay →
+                    UPI Payments →
                   </button>
                 )}
               </div>

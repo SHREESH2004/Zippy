@@ -32,7 +32,7 @@ const Payments = () => {
       alignItems: 'center',
       flexDirection: 'column'
     }}>
-      <h2 style={{ marginBottom: '1rem' }}>💳 Pay with Stripe</h2>
+      <h2 style={{ marginBottom: '1rem' }}>💳 Online Payments</h2>
       <button
         onClick={handleStripePayment}
         style={{
@@ -45,7 +45,7 @@ const Payments = () => {
           cursor: 'pointer',
         }}
       >
-        Pay ₹{totalAmount}
+        Pay ${totalAmount}
       </button>
     </div>
   );
