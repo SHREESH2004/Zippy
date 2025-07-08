@@ -10,9 +10,10 @@ import ordersRoutes from './routes/orders.routes.js';
 import aiRoutes from './routes/ai.routes.js';
 import paymentRouter from './routes/payment.router.js'; // ✅ Keep secret
 configDotenv();
+const clientBaseUrl = process.env.CLIENT_BASE_URL;
 const app=express();
 app.use(cors({
-    origin: "http://localhost:5173", 
+    origin: clientBaseUrl, 
     methods: ["GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS"], 
     credentials: true, 
 }));

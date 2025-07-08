@@ -2,9 +2,10 @@ import express from 'express';
 import Stripe from 'stripe';
 import { configDotenv } from 'dotenv';
 configDotenv();
+
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
+const clientBaseUrl = process.env.CLIENT_BASE_URL;
 
 router.post('/create-checkout-session', async (req, res) => {
   const { amount, orderId } = req.body;
@@ -23,8 +24,8 @@ router.post('/create-checkout-session', async (req, res) => {
         },
         quantity: 1,
       }],
-      success_url: `https://mgx-19trn8lgbrr.mgx.world/`,
-      cancel_url: `http://localhost:5173/payments/failure`,
+      success_url: `${clientBaseUrl}/payments?success=true`,
+      cancel_url: `${clientBaseUrl}/payments?canceled=true`,
     });
 
     res.json({ url: session.url });
