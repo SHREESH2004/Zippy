@@ -56,7 +56,7 @@ export const getZippyChatResponse = async (prompt) => {
       };
     }
 
-    const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+    const SERVER_URL = process.env.VITE_SERVER_URL;
 
     const { data } = await axios.get(`${SERVER_URL}/admin/products/products/all`);
 
