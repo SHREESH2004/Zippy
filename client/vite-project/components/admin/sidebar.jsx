@@ -13,8 +13,6 @@ const AdminSidebar = () => {
           </Link>
         ))}
         {/* Extra static items if needed */}
-        <Link to="/admin/users" style={linkStyles}>Users</Link>
-        <Link to="/admin/settings" style={linkStyles}>Settings</Link>
       </nav>
     </aside>
   );
