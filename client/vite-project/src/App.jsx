@@ -9,7 +9,7 @@ import Account from './pages/shopping/Account';
 import Payments from './pages/shopping/Payments';
 // Auth Guard
 import Checks from "../components/common/checkaith";
-
+import PaymentSuccess from './pages/shopping/payment-sucess';
 // Admin Layout & Pages
 import AdminLayout from '../components/admin/layout';
 import AdminDashboard from './pages/admin/dashboard';
@@ -46,6 +46,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/zippyai" element={<ZippyChat />} />
+        <Route path="/payments/success" element={<PaymentSuccess />} />
         {/* Admin Routes */}
         <Route
           path="/admin"

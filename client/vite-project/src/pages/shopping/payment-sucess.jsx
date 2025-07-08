@@ -6,7 +6,7 @@ const PaymentSuccess = () => {
   const navigate = useNavigate();
 
   const handleBackToHome = () => {
-    navigate('/');
+    navigate('/shopping/account');
   };
 
   return (

@@ -16,7 +16,7 @@ router.post('/create-checkout-session', async (req, res) => {
       mode: 'payment',
       line_items: [{
         price_data: {
-          currency: 'inr',
+          currency: 'usd',
           product_data: {
             name: `Order #${orderId}`,
           },
@@ -24,8 +24,8 @@ router.post('/create-checkout-session', async (req, res) => {
         },
         quantity: 1,
       }],
-      success_url: `${clientBaseUrl}/payments?success=true`,
-      cancel_url: `${clientBaseUrl}/payments?canceled=true`,
+      success_url: `${clientBaseUrl}/payments/success`,
+      cancel_url: `${clientBaseUrl}/payments/canceled`,
     });
 
     res.json({ url: session.url });
