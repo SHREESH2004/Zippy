@@ -13,9 +13,8 @@ https://github.com/user-attachments/assets/0c3a23a0-6700-4103-bd96-75f72f44cd59
 This is your first look at the tools powering Zippy behind the scenes.
 
 📺 Watch the demo above:
-<div align="center"> <a href="https://github.com/user-attachments/assets/0c3a23a0-6700-4103-bd96-75f72f44cd59" target="_blank">  </a> </div>
-⚠️ Note: This is a work-in-progress preview focused on the Admin Portal.
-🧑‍💻 The Customer Dashboard and full user-facing storefront are actively being developed and will be available soon.
+<div align="center"> Demo video will be uploaded soon along with admin portal working full fledged working will be shown </a> </div>
+🧑‍💻 The whole has been developed and deployed if problems faced in deployed link. Plz mail me on shreeshsanyal@gmail.com
 
 
 ## 🚀 Features
