@@ -4,10 +4,10 @@
 Zippy is a sleek, high-performance, and scalable eCommerce platform built with **React.js** on the frontend and **Node.js/Express** on the backend. It features a modern user-facing storefront, a powerful admin dashboard, and integrates with **Cloudinary** for efficient media handling.
 
 ---
-https://github.com/user-attachments/assets/0c3a23a0-6700-4103-bd96-75f72f44cd59
 
 
-🎬 Admin Portal Demo Preview above
+
+🎬 Demo Preview 
 🚀 Prototype in Action
 
 This is your first look at the tools powering Zippy behind the scenes.
